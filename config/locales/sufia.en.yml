@@ -1,0 +1,11 @@
+en:
+  sufia:
+    product_name:       "Digital Collections at Lafayette College"
+    product_twitter_handle: "@HydraSphere"
+    institution_name:   "Lafayette College"
+#    institution_name_full:   "The Institution Name"
+    account_name:       "Lafayette NetID"
+    directory:
+      suffix:           "@example.org"
+    footer:
+      copyright_html: "<span>Digital Scholarship Services</span><span>Skillman Library</span><span>Lafayette College</span>"
