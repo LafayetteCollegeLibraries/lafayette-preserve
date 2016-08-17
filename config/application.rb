@@ -1,6 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+require 'triplestore_adapter'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -16,7 +17,7 @@ module LafayetteConcerns
     config.middleware.insert_before 0, "Rack::Cors" do
       allow do
         origins '*'
-        resource '*', :headers => :any, :methods => [:get, :post, :options]
+        resource '*', :headers => :any, :methods => [:get, :post, :options, :patch, :put, :delete]
       end
     end
 
@@ -34,5 +35,16 @@ module LafayetteConcerns
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+
+    Rails.application.routes.default_url_options[:vocab_domain] = 'authority.lafayette.edu'
+    config.autoload_paths += %W(#{config.root}/lib)
+    config.autoload_paths += %W(#{config.root}/app/injectors) # Uncertain as to why this is needed
+    config.autoload_paths += %W(#{config.root}/app/decorators)
+
+    # config.triplestore_adapter.type = 'blazegraph'
+    # config.triplestore_adapter.url = 'http://localhost'
+    # Rails.application.triplestore_adapter[:type] = 'blazegraph'
+    # Rails.application.triplestore_adapter[:url] = 'http://localhost'
+    config.triplestore_adapter = { type: 'blazegraph', url: 'http://139.147.4.138:8084/bigdata/sparql' }
   end
 end

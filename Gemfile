@@ -40,10 +40,13 @@ gem 'active_fedora-noid', :git => 'https://github.com/projecthydra-labs/active_f
 # gem 'sufia', '7.0.0.beta3'
 # Mark Bussey (on June 30th) reported failures for creating CurationConcerns Work Models using the sufia:work generator
 # Please see https://project-hydra.slack.com/archives/dev/p1467317470002834
-gem "sufia", "7.0.0.beta4", :git => "https://github.com/projecthydra/sufia.git", :ref => '786246a3c8adfab6607227b354d9e1c47bc80efd'
+# gem "sufia", "7.0.0.beta4", :git => "https://github.com/projecthydra/sufia.git", :ref => '786246a3c8adfab6607227b354d9e1c47bc80efd'
+gem "sufia", "7.0.0"
 
 gem 'hydra-role-management'
 gem 'rack-cors', :require => 'rack/cors'
+gem 'triplestore-adapter', :git => "https://github.com/osulp/triplestore-adapter", :branch => "0.1.0"
+gem 'rdf-blazegraph'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

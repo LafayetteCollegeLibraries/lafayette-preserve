@@ -16,6 +16,57 @@ class CatalogController < ApplicationController
     solr_name('system_modified', :stored_sortable, type: :date)
   end
 
+  def self.concern_fields
+    [
+     :creator_photographer,
+     :format_medium,
+     :format_size,
+     :date_approximate,
+     :date_range,
+     :creator_maker,
+     :date_original_display,
+     :description_size,
+     :description_note,
+     :subject_lcsh,
+     :publisher_original,
+     :date_original,
+     :format_extent,
+     :description_condition,
+     :description_provenance,
+     :description_series,
+     :identifier_itemnumber,
+     :publisher_digital,
+     :format_digital,
+     :rights_digital,
+     :subject_ocm,
+     :description_critical,
+     :description_indicia,
+     :description_text,
+     :description_inscription,
+     :description_ethnicity,
+     :description_citation,
+     :coverage_location_country,
+     :coverage_location,
+     :creator_company,
+     :relation_seealso,
+     :date_artifact_upper,
+     :date_artifact_lower,
+     :date_image_upper,
+     :date_image_lower,
+     :title_name,
+     :description_class,
+     :date_birth_display,
+     :coverage_place_birth,
+     :description_military_branch,
+     :description_military_rank,
+     :description_military_unit,
+     :date_death_display,
+     :coverage_place_death,
+     :description_cause_death,
+     :description_honors
+    ]
+  end
+
   configure_blacklight do |config|
     config.view.gallery.partials = [:index_header, :index]
     config.view.masonry.partials = [:index]
