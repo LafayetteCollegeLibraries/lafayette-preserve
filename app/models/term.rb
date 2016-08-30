@@ -30,9 +30,12 @@ class Term < ActiveTriples::Resource
 
   validate :not_blank_node
 
-
   def term_uri
     TermUri.new(rdf_subject)
+  end
+
+  def to_h
+    { :label => label, :alt_label => alt_label, :pref_label => pref_label, :hidden_label => hidden_label }
   end
 
   private

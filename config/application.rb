@@ -41,10 +41,8 @@ module LafayetteConcerns
     config.autoload_paths += %W(#{config.root}/app/injectors) # Uncertain as to why this is needed
     config.autoload_paths += %W(#{config.root}/app/decorators)
 
-    # config.triplestore_adapter.type = 'blazegraph'
-    # config.triplestore_adapter.url = 'http://localhost'
-    # Rails.application.triplestore_adapter[:type] = 'blazegraph'
-    # Rails.application.triplestore_adapter[:url] = 'http://localhost'
-    config.triplestore_adapter = { type: 'blazegraph', url: 'http://139.147.4.138:8084/bigdata/sparql' }
+    config.absolute_url = ENV['RAILS_ABSOLUTE_URL'] || 'http://localhost'
+    config.triplestore_adapter = { type: 'blazegraph', url: ENV['RAILS_TRIPLESTORE_URL'] || 'http://localhost:8084/bigdata/sparql' }
+    #    config.triplestore_adapter = config_for(:graphstore)
   end
 end

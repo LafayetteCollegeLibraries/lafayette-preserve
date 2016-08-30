@@ -16,6 +16,8 @@ module ActiveTriplesAdapter
     def destroy
       erase_old_resource
     end
+
+#    alias :delete :delete!
   end
 
   module ClassMethods
@@ -30,7 +32,15 @@ module ActiveTriplesAdapter
     def all(*args)
       query_graph = TypedQuery.new(sparql_client, RDF::URI.new("http://purl.org/dc/dcam/VocabularyEncodingScheme")).run
 
-      results = GraphToTerms.new(repository, query_graph).terms
+      results = []
+      query_graph.subjects.each do |uri|
+        begin
+          results << find(uri.to_s)
+        rescue
+          nil
+        end
+      end
+
       results.sort_by{|i| i.rdf_subject.to_s.downcase}
     end
 
@@ -38,16 +48,6 @@ module ActiveTriplesAdapter
     def find(uri)
 
       # Not certain why, but this invokes RestClient#send_delete_request when Vocabulary or Term is instantiated?
-=begin
-      result = new(uri)
-      result.orig_reload
-      relevant_triples = result.statements.to_a
-      if type
-        relevant_triples.select!{|x| !(x.predicate == RDF.type && x.object.to_s == type.to_s)}
-      end
-      raise ActiveTriples::NotFound if relevant_triples.length == 0
-      result
-=end
       # injector = TermInjector.new
       # vocab = TermWithChildren.new(self, injector.child_node_finder)
       # vocab.children
@@ -64,7 +64,11 @@ module ActiveTriplesAdapter
     end
 
     def find_or_initialize_by(attributes, &block)
-      find_by(attributes) || new(attributes.fetch(:uri), attributes, &block)
+      begin
+        find_by(attributes)
+      rescue ActiveTriples::NotFound
+        new(attributes.fetch(:uri), attributes, &block)
+      end
     end
 
     def exists?(uri)

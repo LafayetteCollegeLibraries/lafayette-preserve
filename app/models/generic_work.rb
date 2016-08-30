@@ -13,9 +13,5 @@ class GenericWork < ActiveFedora::Base
   # self.valid_child_concerns = []
   validates :title, presence: { message: 'Your work must have a title.' }
 
-  def thumbnail_path
-    path = Rails.application.routes.url_helpers.download_path(thumbnail.id,
-                                                              file: 'thumbnail')
-    path.split('&').first
-  end
+
 end

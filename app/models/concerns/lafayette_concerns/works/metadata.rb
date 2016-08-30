@@ -48,7 +48,7 @@ module LafayetteConcerns::Works
       property :date_original_display, predicate: ::RDF::Vocab::DC.created do |index|
         index.as :stored_searchable
       end
-
+      
       # What distinguishes this from "format.extent"?
       property :description_size, predicate: ::RDF::Vocab::DC11.description do |index|
         index.type :text

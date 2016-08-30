@@ -33,7 +33,6 @@ class VocabulariesController < ApplicationController
       format.json do
 
         attributes = params[:vocabulary]
-        puts attributes
 
         if attributes.include? :uri
           @vocabulary = Vocabulary.new(attributes.delete(:uri))
@@ -84,7 +83,9 @@ class VocabulariesController < ApplicationController
   end
 
   def destroy
+
     # Special handling for blank nodes
+
     id = params[:id]
     uri = "http://#{Rails.application.routes.default_url_options[:vocab_domain]}/ns/#{id}"
 
@@ -122,24 +123,51 @@ class VocabulariesController < ApplicationController
         @vocabulary = Vocabulary.find_or_initialize_by(uri: uri)
 
         terms_attributes = attributes.delete(:terms)
+        terms_attributes = [] if terms_attributes.nil?
+
         attributes.each_pair do |attr_name, value|
           @vocabulary.write_attribute(attr_name, attributes.fetch(attr_name, @vocabulary.read_attribute(attr_name)))
+          # @vocabulary.persist!
+        end
+
+        # If this is a PUT request, remove all Terms
+        if request.put?
+          @vocabulary.children.each do |term|
+            term.destroy
+          end
         end
 
         # attributes[:terms].each do |term_attributes|
         terms_attributes.each do |term_attributes|
 
           # Create the Term if it does not exist
-          @term = Term.find_or_initialize_by(uri: term_attributes.delete(:uri))
+          begin
+            # term = Term.find_or_initialize_by(uri: term_attributes.delete(:uri))
+            term = Term.find_or_initialize_by(uri: term_attributes[:uri])
+          rescue ActiveTriples::NotFound
+            # Handling for cases where there is a malformed URI for the new Term
+            render status: 400, layout:'400'
+          end
+
+          term_attributes.delete(:uri)
+
+          # If the Term exists, ensure that those attributes which are not overwritten are preserved (if this is a PATCH request)
+          if request.patch?
+            term_attributes = term_attributes.merge(term.to_h) { |key, old_attr, new_attr| new_attr.empty? ? old_attr : new_attr }
+          end
+
+          # To be determined: Is this proper to the understanding of PATCH vs. PUT?  If "terms" captures the entire set of entities, is not a PATCH request for a Vocabulary essentially a PUT request for each Term?
+          # Probably best not to undertake this approach; otherwise, updating only select attributes for Term resources will require a series of PUT requests to the Term service endpoints
 
           # Update the Term attributes
           # @term.update(term_attributes)
           term_attributes.each_pair do |attr_name, value|
-            @term.write_attribute(attr_name, term_attributes.fetch(attr_name, @term.read_attribute(attr_name)))
+            term.write_attribute(attr_name, term_attributes.fetch(attr_name, term.read_attribute(attr_name)))
           end
 
-          @term.persist!
+          term.persist!
         end
+
         @vocabulary.persist!
       end
 

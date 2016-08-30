@@ -16,9 +16,8 @@ class Vocabulary < Term
   end
 
   def absolute_path
-    # uri_segments = rdf_subject.to_s.split("http://#{Rails.application.routes.default_url_options[:vocab_domain]}/ns/")
     uri_segments = rdf_subject.to_s.split("/ns/")
-    "//concerns.stage.lafayette.edu/" + ['vocabularies', uri_segments.last].join('/') + '.json'
+    Rails.configuration.absolute_url + ['/vocabularies', uri_segments.last].join('/') + '.json'
   end
 
   def relative_path
@@ -29,6 +28,7 @@ class Vocabulary < Term
   end
 
   def persist!
+    destroy
     repository.insert(statements)
   end
 

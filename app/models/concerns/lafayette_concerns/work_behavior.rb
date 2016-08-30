@@ -14,5 +14,11 @@ module LafayetteConcerns
       nil
     end
 =end
+
+    def thumbnail_path
+      path = Rails.application.routes.url_helpers.download_path(thumbnail.id,
+                                                                file: 'thumbnail')
+      Rails.configuration.absolute_url + path.split('&').first
+    end
   end
 end

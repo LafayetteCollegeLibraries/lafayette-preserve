@@ -1,0 +1,11 @@
+# This is a sample config file that points to a solr server for each environment
+development:
+  type: 'blazegraph'
+  url: http://<%= ENV['GRAPHSTORE_TEST_URL'] || '127.0.0.1' %>:<%= ENV['GRAPHSTORE_TEST_PORT'] || 8084 %>/bigdata/sparql
+#  url: "http://139.147.4.138:8084/bigdata/sparql"
+test:
+  type: 'blazegraph'
+  url: http://<%= ENV['GRAPHSTORE_TEST_URL'] || '127.0.0.1' %>:<%= ENV['GRAPHSTORE_TEST_PORT'] || 8084 %>/bigdata/sparql
+production:
+  type: 'blazegraph'
+  url: http://your.production.server:8084/bigdata/sparql
