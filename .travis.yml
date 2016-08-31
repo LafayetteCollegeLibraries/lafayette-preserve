@@ -17,8 +17,8 @@ before_install:
   - "phantomjs --version"
 
 before_script:
-  - solr_wrapper -p 8985 -d solr/config/ --collection_name hydra-test
-  - fcrepo_wrapper -p 8986 --no-jms
+  - bundle exec solr_wrapper -p 8985 -d solr/config/ --collection_name hydra-test
+  - bundle exec fcrepo_wrapper -p 8986 --no-jms
 
 rvm:
   - 2.3.1
