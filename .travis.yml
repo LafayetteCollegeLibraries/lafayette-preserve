@@ -32,7 +32,7 @@ before_script:
   - jdk_switcher use oraclejdk8
   - RAILS_ENV="test" bundle exec rake db:migrate
   - RAILS_ENV="test" bundle exec fcrepo_wrapper -p 8986 2>&1 >/dev/null &
-  - RAILS_ENV="test" bundle exec solr_wrapper -p 8985 2>&1 >/dev/null &
+  - RAILS_ENV="test" bundle exec solr_wrapper -p 8985 -d solr/config --collection_name hydra-test 2>&1 >/dev/null &
   - sleep 10
 
 script: RAILS_ENV="test" bundle exec rake spec
