@@ -3,6 +3,6 @@ development:
 #  url: http://127.0.0.1:<%= ENV['SOLR_TEST_PORT'] || 8983 %>/solr/hydra-development
   url: "http://139.147.4.138:8984/solr/concerns"
 test:
-  url: http://127.0.0.1:<%= ENV['SOLR_TEST_PORT'] || 8985 %>/solr/hydra-test
+  url: http://0.0.0.0:<%= ENV['SOLR_TEST_PORT'] || 8985 %>/solr/hydra-test
 production:
   url: http://your.production.server:8080/bl_solr/core0
