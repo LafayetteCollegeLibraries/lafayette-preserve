@@ -31,7 +31,7 @@ services:
 before_script:
   - jdk_switcher use oraclejdk8
   - RAILS_ENV="test" bundle exec rake db:migrate
-  - RAILS_ENV="test" bundle exec fcrepo_wrapper 2>&1 >/dev/null &
+  - RAILS_ENV="test" bundle exec fcrepo_wrapper -p 8986 2>&1 >/dev/null &
   - RAILS_ENV="test" bundle exec solr_wrapper 2>&1 >/dev/null &
   - sleep 10
 
