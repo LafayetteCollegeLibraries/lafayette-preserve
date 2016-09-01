@@ -38,10 +38,6 @@ class Vocabulary < Term
     sparql_client ||= SPARQL::Client.new(Rails.configuration.triplestore_adapter[:url])
     query_graph = ControlledQuery.new(sparql_client, property.predicate).run
 
-    # repository = RDF::Blazegraph::Repository.new(Rails.configuration.triplestore_adapter[:url])
-    # results = GraphToTerms.new(repository, query_graph).terms
-    # results.sort_by{|i| i.rdf_subject.to_s.downcase}
-
     query_graph.subjects.map do |subject|
       Vocabulary.find(subject)
     end

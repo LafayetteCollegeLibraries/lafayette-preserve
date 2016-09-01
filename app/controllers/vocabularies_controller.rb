@@ -1,10 +1,9 @@
 class VocabulariesController < ApplicationController
   delegate :vocabulary_form_repository,  :all_vocabs_query, :to => :injector
   delegate :deprecate_vocabulary_form_repository, :to => :deprecate_injector
-  # include GitInterface
+
   def index
     @vocabularies = Vocabulary.all
-    # @vocabularies.sort_by! {|v| v.label.first.downcase }
   end
 
   def new
@@ -12,21 +11,6 @@ class VocabulariesController < ApplicationController
   end
 
   def create
-=begin
-    vocabulary_form = vocabulary_form_repository.new(vocabulary_params[:id])
-    vocabulary_form.attributes = vocabulary_params.except(:id)
-    vocabulary_form.set_languages(params[:vocabulary])
-    if vocabulary_form.save
-      triples = vocabulary_form.sort_stringify(vocabulary_form.single_graph)
-      rugged_create(vocabulary_params[:id], triples, "creating")
-      rugged_merge(vocabulary_params[:id])
-
-      redirect_to term_path(:id => vocabulary_form.id)
-    else
-      @vocabulary = vocabulary_form
-      render "new"
-    end
-=end
 
     respond_to do |format|
 
@@ -98,28 +82,12 @@ class VocabulariesController < ApplicationController
   end
 
   def update
-=begin
-    edit_vocabulary_form = vocabulary_form_repository.find(params[:id])
-    edit_vocabulary_form.attributes = vocabulary_params
-    edit_vocabulary_form.set_languages(params[:vocabulary])
-    if edit_vocabulary_form.save
-      triples = edit_vocabulary_form.sort_stringify(edit_vocabulary_form.single_graph)
-      rugged_create(params[:id], triples, "updating")
-      rugged_merge(params[:id])
-
-      redirect_to term_path(:id => params[:id])
-    else
-      @term = edit_vocabulary_form
-      render "edit"
-    end
-=end
     respond_to do |format|
 
       format.json do
 
         attributes = params[:vocabulary]
         uri = "http://#{Rails.application.routes.default_url_options[:vocab_domain]}/ns/#{params[:id]}"
-        # @vocabulary = Vocabulary.find(uri)
         @vocabulary = Vocabulary.find_or_initialize_by(uri: uri)
 
         terms_attributes = attributes.delete(:terms)
@@ -127,7 +95,6 @@ class VocabulariesController < ApplicationController
 
         attributes.each_pair do |attr_name, value|
           @vocabulary.write_attribute(attr_name, attributes.fetch(attr_name, @vocabulary.read_attribute(attr_name)))
-          # @vocabulary.persist!
         end
 
         # If this is a PUT request, remove all Terms
@@ -137,12 +104,10 @@ class VocabulariesController < ApplicationController
           end
         end
 
-        # attributes[:terms].each do |term_attributes|
         terms_attributes.each do |term_attributes|
 
           # Create the Term if it does not exist
           begin
-            # term = Term.find_or_initialize_by(uri: term_attributes.delete(:uri))
             term = Term.find_or_initialize_by(uri: term_attributes[:uri])
           rescue ActiveTriples::NotFound
             # Handling for cases where there is a malformed URI for the new Term
@@ -160,7 +125,6 @@ class VocabulariesController < ApplicationController
           # Probably best not to undertake this approach; otherwise, updating only select attributes for Term resources will require a series of PUT requests to the Term service endpoints
 
           # Update the Term attributes
-          # @term.update(term_attributes)
           term_attributes.each_pair do |attr_name, value|
             term.write_attribute(attr_name, term_attributes.fetch(attr_name, term.read_attribute(attr_name)))
           end
@@ -198,13 +162,6 @@ class VocabulariesController < ApplicationController
       format.json do
         # Query Solr for the collection.
         # run the solr query to find the collection members
-=begin
-        response = repository.search(collection_search_builder.query)
-        collection_document = response.documents.first
-        raise CanCan::AccessDenied unless collection_document
-        @collection = Collection.find(collection_document[:id])
-        render 'curation_concerns/collections/show', status: :ok
-=end
         uri = "http://authority.lafayette.edu/ns/#{params[:id]}"
         @vocabulary = Vocabulary.find(uri)
         render 'show', status: :ok

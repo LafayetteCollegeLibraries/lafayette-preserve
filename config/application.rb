@@ -36,7 +36,7 @@ module LafayetteConcerns
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
 
-    Rails.application.routes.default_url_options[:vocab_domain] = 'authority.lafayette.edu'
+    Rails.application.routes.default_url_options[:vocab_domain] = ENV['RAILS_VOCAB_DOMAIN'] || 'authority.localhost.localdomain'
     config.autoload_paths += %W(#{config.root}/lib)
     config.autoload_paths += %W(#{config.root}/app/injectors) # Uncertain as to why this is needed
     config.autoload_paths += %W(#{config.root}/app/decorators)

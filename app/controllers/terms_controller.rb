@@ -2,7 +2,7 @@ class TermsController < AdminController
   delegate :term_form_repository, :term_repository, :vocabulary_repository, :to => :injector
   delegate :deprecate_term_form_repository, :to => :deprecate_injector
   rescue_from ActiveTriples::NotFound, :with => :render_404
-  # include GitInterface
+
   def show
     @term = find_term
     @term.commit_history = get_history(@term.id)
@@ -21,20 +21,6 @@ class TermsController < AdminController
   def create
     @vocabulary = find_vocabulary
     combined_id = CombinedId.new(params[:vocabulary_id], term_params[:id])
-=begin
-    term_form = term_form_repository.new(combined_id, params[:term_type].constantize)
-    term_form.attributes = vocab_params.except(:id)
-    term_form.set_languages(params[:vocabulary])
-    if term_form.save
-      triples = term_form.sort_stringify(term_form.full_graph)
-      rugged_create(combined_id.to_s, triples, "creating")
-      rugged_merge(combined_id.to_s)
-      redirect_to term_path(:id => term_form.id)
-    else
-      @term = term_form
-      render "new"
-    end
-=end
   end
 
   def edit

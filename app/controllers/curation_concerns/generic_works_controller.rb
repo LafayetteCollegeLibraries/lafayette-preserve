@@ -8,9 +8,7 @@ module CurationConcerns
     include Sufia::WorksControllerBehavior
 
     self.curation_concern_type = GenericWork
-    # skip_authorize_resource :only => [ :update, :destroy ]
     skip_authorize_resource :only => [ :update ]
-    # skip_load_and_authorize_resource only: [:destroy]
 
     # If any attributes are blank remove them
     # e.g.:
@@ -64,58 +62,10 @@ module CurationConcerns
       end
     end
 
-=begin
-    # See CurationsConcerns::Actors::FileActor
-    def ingest_file(file)
-      working_file = WorkingDirectory.copy_file_to_working_directory(file, file_set.id)
-      mime_type = file.respond_to?(:content_type) ? file.content_type : nil
-      IngestFileJob.perform_later(file_set, working_file, mime_type, user, relation)
-      true
-    end
-
-    # See CurationConcerns::Actors::FileSetActor
-    # @param [File, ActionDigest::HTTP::UploadedFile, Tempfile] file the file uploaded by the user.
-    # @param [String] relation ('original_file')
-    def create_content(file, relation = 'original_file')
-      # If the file set doesn't have a title or label assigned, set a default.
-      file_set.label ||= file.respond_to?(:original_filename) ? file.original_filename : ::File.basename(file)
-      file_set.title = [file_set.label] if file_set.title.blank?
-
-      # Need to save the file_set in order to get an id
-      return false unless file_set.save
-
-      # file_actor_class.new(file_set, relation, user).ingest_file(file)
-      ingest_file(file)
-      true
-    end
-
-    # See CurationConcerns::FileSetsController
-    def create_from_upload(params)
-      # check error condition No files
-      return render_json_response(response_type: :bad_request, options: { message: 'Error! No file to save' }) unless params.key?(:file_set) && params.fetch(:file_set).key?(:files)
-
-      file = params[:file_set][:files].detect { |f| f.respond_to?(:original_filename) }
-      if !file
-        render_json_response(response_type: :bad_request, options: { message: 'Error! No file for upload', description: 'unknown file' })
-      elsif empty_file?(file)
-        render_json_response(response_type: :unprocessable_entity, options: { errors: { files: "#{file.original_filename} has no content! (Zero length file)" }, description: t('curation_concerns.api.unprocessable_entity.empty_file') })
-      else
-        process_file(file)
-      end
-    rescue RSolr::Error::Http => error
-      logger.error "FileSetController::create rescued #{error.class}\n\t#{error}\n #{error.backtrace.join("\n")}\n\n"
-      render_json_response(response_type: :internal_error, options: { message: 'Error occurred while creating a FileSet.' })
-    ensure
-      # remove the tempfile (only if it is a temp file)
-      file.tempfile.delete if file.respond_to?(:tempfile)
-    end
-=end
-
     def new
       respond_to do |wants|
         wants.json do
           # Create the FileSet
-          
 
           # Create the CurationConcern Resource
 

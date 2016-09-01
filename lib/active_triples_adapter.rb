@@ -16,8 +16,6 @@ module ActiveTriplesAdapter
     def destroy
       erase_old_resource
     end
-
-#    alias :delete :delete!
   end
 
   module ClassMethods
@@ -48,10 +46,6 @@ module ActiveTriplesAdapter
     def find(uri)
 
       # Not certain why, but this invokes RestClient#send_delete_request when Vocabulary or Term is instantiated?
-      # injector = TermInjector.new
-      # vocab = TermWithChildren.new(self, injector.child_node_finder)
-      # vocab.children
-
       query_graph = SingleQuery.new(sparql_client, RDF::URI.new(uri)).run
 
       results = GraphToTerms.new(repository, query_graph).terms

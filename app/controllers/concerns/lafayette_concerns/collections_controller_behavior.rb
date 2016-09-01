@@ -3,7 +3,6 @@ module LafayetteConcerns
     extend ActiveSupport::Concern
 
     included do
-      # actions: audit, index, create, new, edit, show, update, destroy, permissions, citation                                                                                                                                           
       before_action :authenticate_user!, except: [:show, :update]
       load_and_authorize_resource except: [:index, :show, :update], instance_name: :collection
       skip_authorize_resource :only => :update

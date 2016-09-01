@@ -1,6 +1,5 @@
 development:
-#  host: localhost
-  host: 139.147.4.138
+  host: localhost
   port: 6379
 test:
   host: localhost

@@ -40,9 +40,6 @@ class Term < ActiveTriples::Resource
 
   private
   def repository
-    # rdf_statement = RDF::Statement.new(:subject => rdf_subject)
-    # @repository ||= TriplestoreRepository.new(rdf_statement, Rails.configuration.triplestore_adapter['type'], Rails.configuration.triplestore_adapter['url'])
-    # @repository ||= RDF::Repository.new(uri: Rails.configuration.triplestore_adapter[:url])
     @repository ||= RDF::Blazegraph::Repository.new(Rails.configuration.triplestore_adapter[:url])
   end
 
