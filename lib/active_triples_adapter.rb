@@ -20,11 +20,11 @@ module ActiveTriplesAdapter
 
   module ClassMethods
     def sparql_client
-      sparql_client ||= SPARQL::Client.new(Rails.configuration.triplestore_adapter[:url])
+      sparql_client ||= SPARQL::Client.new(ENV['TRIPLESTORE_URL'])
     end
 
     def repository
-      repository = RDF::Blazegraph::Repository.new(Rails.configuration.triplestore_adapter[:url])
+      repository = RDF::Blazegraph::Repository.new(ENV['TRIPLESTORE_URL'])
     end
 
     def all(*args)

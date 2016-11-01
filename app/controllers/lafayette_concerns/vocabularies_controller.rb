@@ -139,13 +139,13 @@ class VocabulariesController < ApplicationController
           rescue ActiveTriples::NotInVocabulary => e
             @message = 'Term not a member of the Vocabulary'
             @term = e.term
-            render status: 400, layout:'lafayette_concerns/vocabularies/400_term_foo'
+            render status: 400, layout:'400_term'
             
           rescue ActiveTriples::NotFound => e
             # Handling for cases where there is a malformed URI for the new Term
             @message = 'Term could not be found or minted (is the URI for the term valid?)'
             @term = e.term
-            render status: 400, layout:'lafayette_concerns/vocabularies/400_term_bar'
+            render status: 400, layout:'400_term'
           end
         
           term_attributes.delete(:uri)

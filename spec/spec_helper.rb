@@ -91,6 +91,7 @@ else
   end
 end
 
+=begin
 class JsonStrategy
   def initialize
     @strategy = FactoryGirl.strategy_by_name(:create).new
@@ -104,18 +105,9 @@ class JsonStrategy
 end
 
 FactoryGirl.register_strategy(:json, JsonStrategy)
+=end
 FactoryGirl.definition_file_paths = [File.expand_path("../factories", __FILE__)]
 FactoryGirl.find_definitions
-
-module EngineRoutes
-  def self.included(base)
-    base.routes { Sufia::Engine.routes }
-  end
-
-  def main_app
-    Rails.application.class.routes.url_helpers
-  end
-end
 
 require 'shoulda/matchers'
 Shoulda::Matchers.configure do |config|
@@ -131,7 +123,7 @@ RSpec.configure do |config|
   end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = File.expand_path("../fixtures", __FILE__)
+#  config.fixture_path = File.expand_path("../fixtures", __FILE__)
 
   config.use_transactional_fixtures = false
 
@@ -176,7 +168,9 @@ RSpec.configure do |config|
 #    config.include BackportTestHelpers, type: :controller
 #  end
 
-  config.include EngineRoutes, type: :controller
+  # config.include RailsRoutes
+  config.include Rails.application.routes.url_helpers
+
   config.include Warden::Test::Helpers, type: :feature
   config.after(:each, type: :feature) { Warden.test_reset! }
 

@@ -49,8 +49,6 @@ class CatalogController < ApplicationController
      :coverage_location,
      :creator_company,
      :relation_seealso,
-     :date_artifact_upper,
-     :date_artifact_lower,
      :date_image_upper,
      :date_image_lower,
      :title_name,
@@ -92,7 +90,17 @@ class CatalogController < ApplicationController
     config.default_solr_params = {
       qt: "search",
       rows: 10,
-      qf: "title_tesim name_tesim"
+      qf: "title_tesim name_tesim",
+
+      'facet.range': 'date_artifact_upper_dtsi',
+      "f.date_artifact_upper_dtsi.facet.range.start": '1900-01-01T00:00:00.000Z',
+      "f.date_artifact_upper_dtsi.facet.range.end": 'NOW',
+      "f.date_artifact_upper_dtsi.facet.range.gap": '+1MONTH',
+
+
+      "f.date_artifact_lower_dtsi.facet.range.start": '1900-01-01T00:00:00.000Z',
+      "f.date_artifact_lower_dtsi.facet.range.end": 'NOW',
+      "f.date_artifact_lower_dtsi.facet.range.gap": '+1MONTH'
     }
 
     # solr field configuration for document/show views
@@ -111,6 +119,30 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name("based_near", :facetable), label: "Location", limit: 5
     config.add_facet_field solr_name("publisher", :facetable), label: "Publisher", limit: 5
     config.add_facet_field solr_name("file_format", :facetable), label: "File Format", limit: 5
+
+    # East Asia Image Collection
+    config.add_facet_field solr_name("subject_ocm", :facetable), label: "Subject.OCM", limit: 5
+    config.add_facet_field solr_name("date_original", :facetable), label: "Date.Original", limit: 5, date: true
+    # config.add_facet_field solr_name("date_artifact_upper", :facetable), label: "Date.Artifact.Upper", limit: 5, date: true
+    config.add_facet_field solr_name("date_artifact_upper", :facetable), label: "Date.Artifact.Upper", collapse: false, show: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+    # config.add_facet_field solr_name("date_artifact_lower", :facetable), label: "Date.Artifact.Lower", limit: 5, date: true
+    config.add_facet_field solr_name("date_artifact_lower", :facetable), label: "Date.Artifact.Lower", range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+
+    config.add_facet_field solr_name("date_image_upper", :facetable), label: "Date.Image.Upper", limit: 5, date: true
+    config.add_facet_field solr_name("date_image_lower", :facetable), label: "Date.Image.Lower", limit: 5, date: true
+
+    # Need to create vraEvent/schema.org Events in response to ingestion for EAIC and Silk Road
+
+    # Special Collections and College Archives
+    config.add_facet_field solr_name("subject_loc", :facetable), label: "Subject.LOC", limit: 5
+    config.add_facet_field solr_name("subject_lcsh", :facetable), label: "Subject.LCSH", limit: 5
+    config.add_facet_field solr_name("creator_photographer", :facetable), label: "Creator.Photographer", limit: 5
+    config.add_facet_field solr_name("creator_maker", :facetable), label: "Creator.Maker", limit: 5
+    config.add_facet_field solr_name("publisher_original", :facetable), label: "Publisher.Original", limit: 5
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request

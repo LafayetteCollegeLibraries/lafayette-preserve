@@ -36,13 +36,20 @@ module LafayetteConcerns
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
 
-    Rails.application.routes.default_url_options[:vocab_domain] = ENV['RAILS_VOCAB_DOMAIN'] || 'authority.localhost.localdomain'
+    Rails.application.routes.default_url_options[:vocab_domain] = ENV['VOCAB_DOMAIN'] || 'namespace.org'
     config.autoload_paths += %W(#{config.root}/lib)
     config.autoload_paths += %W(#{config.root}/app/injectors) # Uncertain as to why this is needed
     config.autoload_paths += %W(#{config.root}/app/decorators)
 
-    config.absolute_url = ENV['RAILS_ABSOLUTE_URL'] || 'http://localhost'
-    config.triplestore_adapter = { type: 'blazegraph', url: ENV['RAILS_TRIPLESTORE_URL'] || 'http://localhost:8084/bigdata/sparql' }
+    config.absolute_url = ENV['ABSOLUTE_URL'] || 'http://localhost'
+
     #    config.triplestore_adapter = config_for(:graphstore)
+    # puts 'trace config'
+    # blazegraph_url = ENV['RAILS_TRIPLESTORE_URL'] || 'http://localhost:8084/bigdata/sparql'
+    # config.triplestore_adapter = { type: 'blazegraph', url: blazegraph_url }
+
+# triplestore_adapter:
+#   type: 'blazegraph'
+#   url: "http://localhost:9999/blazegraph/namespace/development/sparql"
   end
 end

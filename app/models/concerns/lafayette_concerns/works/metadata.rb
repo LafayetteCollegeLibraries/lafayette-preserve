@@ -70,9 +70,6 @@ module LafayetteConcerns::Works
         index.as :stored_searchable, :facetable
       end
 
-      property :date_original, predicate: ::RDF::Vocab::DC.created do |index|
-        index.as :stored_searchable
-      end
 
       property :format_extent, predicate: ::RDF::Vocab::DC11.format do |index|
         index.as :stored_searchable

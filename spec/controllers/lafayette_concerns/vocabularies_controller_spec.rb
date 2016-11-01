@@ -36,12 +36,21 @@ describe LafayetteConcerns::VocabulariesController, :type => :controller do
       end
     end
 
-    describe 'replacing the attributes and terms of a vocabulary' do
+    describe 'replacing a vocabulary with different attributes and terms' do
       before { put :update, id: 'testVocabulary', vocabulary: { label: ['replaced label'], terms: [ { uri: 'http://namespace.org/ns/testVocabulary/testTerm', label: ['replaced term label'] } ] }, format: :json }
       subject { response }
       it "returns 200" do
 
         expect(response.code).to eq "200"
+      end
+    end
+
+    describe 'replacing a vocabulary using a foreign (or non-existent) term' do
+      before { put :update, id: 'testVocabulary', vocabulary: { label: ['replaced label'], terms: [ { uri: 'http://namespace.org/ns/anotherVocabulary/testTerm', label: ['replaced term label'] } ] }, format: :json }
+      subject { response }
+      it "returns 400" do
+
+        expect(response.code).to eq "400"
       end
     end
 

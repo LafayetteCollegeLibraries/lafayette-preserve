@@ -3,7 +3,10 @@ module LafayetteConcerns::EastAsiaWorks
     extend ActiveSupport::Concern
 
     included do
-      property :subject_ocm, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#subjectOcm')
+      property :subject_ocm, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#subjectOcm') do |index|
+        index.as :stored_sortable, :facetable
+      end
+
       property :description_critical, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#descriptionCritical')
       property :description_indicia, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#descriptionIndicia')
       property :description_text, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#descriptionText')
@@ -18,12 +21,28 @@ module LafayetteConcerns::EastAsiaWorks
 
       property :relation_seealso, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#relationSeealso')
 
-      property :date_original, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateOriginal')
-      property :date_artifact_upper, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateArtifactUpper')
-      property :date_artifact_lower, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateArtifactLower')
+      property :date_original, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateOriginal') do |index|
+        index.type :date
+        index.as :stored_sortable, :facetable
+      end
 
-      property :date_image_upper, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateImageUpper')
-      property :date_image_lower, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateImageLower')
+      property :date_artifact_upper, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateArtifactUpper') do |index|
+        index.type :date
+        index.as :stored_sortable, :facetable
+      end
+      property :date_artifact_lower, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateArtifactLower') do |index|
+        index.type :date
+        index.as :stored_sortable, :facetable
+      end
+
+      property :date_image_upper, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateImageUpper') do |index|
+        index.type :date
+        index.as :stored_sortable, :facetable
+      end
+      property :date_image_lower, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateImageLower') do |index|
+        index.type :date
+        index.as :stored_sortable, :facetable
+      end
     end
   end
 end
