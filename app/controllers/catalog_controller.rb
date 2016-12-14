@@ -2,7 +2,9 @@ class CatalogController < ApplicationController
   include Hydra::Catalog
   include Hydra::Controller::ControllerBehavior
   include Sufia::Catalog
+  include LafayetteConcerns::Catalog
   include BlacklightAdvancedSearch::Controller
+#  include BlacklightRangeLimit::ControllerOverride
 
   # These before_filters apply the hydra access controls
   before_filter :enforce_show_permissions, only: :show
@@ -49,8 +51,6 @@ class CatalogController < ApplicationController
      :coverage_location,
      :creator_company,
      :relation_seealso,
-     :date_artifact_upper,
-     :date_artifact_lower,
      :date_image_upper,
      :date_image_lower,
      :title_name,
@@ -93,7 +93,12 @@ class CatalogController < ApplicationController
       qt: "search",
       rows: 10,
       qf: "title_tesim name_tesim"
+
     }
+
+    Rails.logger.warn 'TRACE'
+
+
 
     # solr field configuration for document/show views
     config.index.title_field = solr_name("title", :stored_searchable)
@@ -111,6 +116,34 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name("based_near", :facetable), label: "Location", limit: 5
     config.add_facet_field solr_name("publisher", :facetable), label: "Publisher", limit: 5
     config.add_facet_field solr_name("file_format", :facetable), label: "File Format", limit: 5
+
+    # East Asia Image Collection
+    config.add_facet_field solr_name("subject_ocm", :facetable), label: "Subject.OCM", limit: nil
+    config.add_facet_field solr_name("date_original", :stored_sortable, type: :date), label: "Date.Original", date: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+
+    config.add_facet_field solr_name("date_artifact_upper", :stored_sortable, type: :date), label: "Date.Artifact.Upper", date: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+    config.add_facet_field solr_name("date_artifact_lower", :stored_sortable, type: :date), label: "Date.Artifact.Lower", date: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+    config.add_facet_field solr_name("date_image_upper", :stored_sortable, type: :date), label: "Date.Image.Upper", date: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+    config.add_facet_field solr_name("date_image_lower", :stored_sortable, type: :date), label: "Date.Image.Lower", date: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+
+    # Need to create vraEvent/schema.org Events in response to ingestion for EAIC and Silk Road
+
+    # Special Collections and College Archives
+    config.add_facet_field solr_name("subject_loc", :facetable), label: "Subject.LOC", limit: nil
+    config.add_facet_field solr_name("subject_lcsh", :facetable), label: "Subject.LCSH", limit: nil
+    config.add_facet_field solr_name("creator_photographer", :facetable), label: "Creator.Photographer", limit: nil
+    config.add_facet_field solr_name("creator_maker", :facetable), label: "Creator.Maker", limit: nil
+    config.add_facet_field solr_name("publisher_original", :facetable), label: "Publisher.Original", limit: nil
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request

@@ -8,7 +8,7 @@ class Term < ActiveTriples::Resource
 
   attr_accessor :commit_history
 
-  configure :base_uri => "http://#{Rails.application.routes.default_url_options[:vocab_domain]}/ns/"
+  configure :base_uri => "http://#{ENV['VOCAB_DOMAIN'] || 'authority.localhost.localdomain'}/ns/"
   configure :repository => :default
   configure :type => RDF::URI("http://www.w3.org/2004/02/skos/core#Concept")
 
@@ -26,9 +26,15 @@ class Term < ActiveTriples::Resource
   property :alt_label, :predicate => RDF::Vocab::SKOS.altLabel
   property :hidden_label, :predicate => RDF::Vocab::SKOS.hiddenLabel
 
-  delegate :vocabulary_id, :leaf, :to => :term_uri, :prefix => true
-
   validate :not_blank_node
+
+  def namespace
+    "#{rdf_subject.scheme}://#{rdf_subject.host}/ns/"
+  end
+
+  def path
+    rdf_subject.to_s.sub(/#{Regexp.escape(namespace)}/, '')
+  end
 
   def term_uri
     TermUri.new(rdf_subject)
@@ -40,7 +46,7 @@ class Term < ActiveTriples::Resource
 
   private
   def repository
-    @repository ||= RDF::Blazegraph::Repository.new(Rails.configuration.triplestore_adapter[:url])
+    @repository ||= RDF::Blazegraph::Repository.new(ENV['TRIPLESTORE_URL'])
   end
 
   def not_blank_node

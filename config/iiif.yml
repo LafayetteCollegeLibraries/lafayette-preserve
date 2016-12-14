@@ -1,0 +1,7 @@
+# This is a sample config file that points to a solr server for each environment
+development:
+  url: <%= ENV['IMAGE_SERVER_URI'] || 'http://127.0.0.1:5002/loris' %>
+test:
+  url: <%= ENV['IMAGE_SERVER_URI'] || 'http://127.0.0.1:5003/loris' %>
+production:
+  url: http://your.production.server:5004/loris

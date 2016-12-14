@@ -1,7 +1,7 @@
 json.uri @vocabulary.rdf_subject.to_s
-json.label @vocabulary.label
+json.label @vocabulary.title
 json.alt_label @vocabulary.alt_label
-json.pref_label @vocabulary.pref_label
+json.pref_label @vocabulary.title
 json.hidden_label @vocabulary.hidden_label
 json.absolute_path @vocabulary.absolute_path
 json.terms @vocabulary.children do |term|

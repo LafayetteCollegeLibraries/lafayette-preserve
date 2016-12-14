@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   mount Blacklight::Engine => '/'
   
   concern :searchable, Blacklight::Routes::Searchable.new
+#  concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
+#  concerns :range_searchable
 
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
     concerns :searchable

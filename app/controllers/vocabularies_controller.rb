@@ -3,7 +3,8 @@ class VocabulariesController < ApplicationController
   delegate :deprecate_vocabulary_form_repository, :to => :deprecate_injector
 
   def index
-    @vocabularies = Vocabulary.all
+    # Filter for the "root" vocabulary namespace
+    @vocabularies = Vocabulary.all.reject { |vocab| vocab.rdf_subject == namespace_uri }
   end
 
   def new
@@ -11,7 +12,6 @@ class VocabulariesController < ApplicationController
   end
 
   def create
-
     respond_to do |format|
 
       format.json do
@@ -66,12 +66,14 @@ class VocabulariesController < ApplicationController
     @term = vocabulary_form_repository.find(params[:id])
   end
 
+
+
   def destroy
 
     # Special handling for blank nodes
-
     id = params[:id]
-    uri = "http://#{Rails.application.routes.default_url_options[:vocab_domain]}/ns/#{id}"
+    uri = "http://#{ENV['VOCAB_DOMAIN'] || 'authority.localhost.localdomain'}/ns/#{id}"
+    # uri = "#{namespace_uri}#{id}"
 
     begin
       @vocabulary = Vocabulary.find(uri)
@@ -87,15 +89,29 @@ class VocabulariesController < ApplicationController
       format.json do
 
         attributes = params[:vocabulary]
-        uri = "http://#{Rails.application.routes.default_url_options[:vocab_domain]}/ns/#{params[:id]}"
-        @vocabulary = Vocabulary.find_or_initialize_by(uri: uri)
+        id = params[:id]
+        vocab_uri = "http://#{ENV['VOCAB_DOMAIN'] || 'authority.localhost.localdomain'}/ns/#{id}"
+        # vocab_uri = "#{namespace_uri}#{id}"
+
+        @vocabulary = Vocabulary.find_or_initialize_by(uri: vocab_uri)
 
         terms_attributes = attributes.delete(:terms)
         terms_attributes = [] if terms_attributes.nil?
 
+        # If this is a PUT request, remove all attributes
+        if request.put?
+          @vocabulary.class.properties.keys.each do |attr_name|
+            @vocabulary.write_attribute(attr_name, attributes.fetch(attr_name, []))
+          end
+        end
+
+        Rails.logger.warn @vocabulary.attributes
+
         attributes.each_pair do |attr_name, value|
           @vocabulary.write_attribute(attr_name, attributes.fetch(attr_name, @vocabulary.read_attribute(attr_name)))
         end
+
+        Rails.logger.warn @vocabulary.attributes
 
         # If this is a PUT request, remove all Terms
         if request.put?
@@ -105,20 +121,43 @@ class VocabulariesController < ApplicationController
         end
 
         terms_attributes.each do |term_attributes|
-
           # Create the Term if it does not exist
           begin
+
             term = Term.find_or_initialize_by(uri: term_attributes[:uri])
-          rescue ActiveTriples::NotFound
+
+            # Validate the namespace for the vocabulary
+            if term.namespace != @vocabulary.namespace
+              raise ActiveTriples::NotInNamespace.new(term)
+            end
+
+            # Validate the membership for the vocabulary
+            if not @vocabulary.include? term
+              raise ActiveTriples::NotInVocabulary.new(term)
+            end
+
+          rescue ActiveTriples::NotInNamespace => e
+            @message = 'Namespace conflict between Term and Vocabulary'
+            @term = e.term
+            render status: 400, layout:'400_term'
+
+          rescue ActiveTriples::NotInVocabulary => e
+            @message = 'Term not a member of the Vocabulary'
+            @term = e.term
+            render status: 400, layout:'400_term'
+
+          rescue ActiveTriples::NotFound => e
             # Handling for cases where there is a malformed URI for the new Term
-            render status: 400, layout:'400'
+            @message = 'Term could not be found or minted (is the URI for the term valid?)'
+            @term = e.term
+            render status: 400, layout:'400_term'
           end
 
           term_attributes.delete(:uri)
 
           # If the Term exists, ensure that those attributes which are not overwritten are preserved (if this is a PATCH request)
           if request.patch?
-            term_attributes = term_attributes.merge(term.to_h) { |key, old_attr, new_attr| new_attr.empty? ? old_attr : new_attr }
+            term_attributes = term.to_h.merge(term_attributes) { |key, old_attr, new_attr| new_attr.empty? ? old_attr : new_attr }
           end
 
           # To be determined: Is this proper to the understanding of PATCH vs. PUT?  If "terms" captures the entire set of entities, is not a PATCH request for a Vocabulary essentially a PUT request for each Term?
@@ -160,10 +199,9 @@ class VocabulariesController < ApplicationController
   def show
     respond_to do |format|
       format.json do
-        # Query Solr for the collection.
-        # run the solr query to find the collection members
-        uri = "http://authority.lafayette.edu/ns/#{params[:id]}"
+        uri = "#{namespace_uri}#{params[:id]}"
         @vocabulary = Vocabulary.find(uri)
+
         render 'show', status: :ok
       end
     end
@@ -183,4 +221,11 @@ class VocabulariesController < ApplicationController
     @injector ||= DeprecateVocabularyInjector.new(params)
   end
 
+  def base_uri(protocol = 'http:')
+    "#{protocol}//#{ENV['VOCAB_DOMAIN'] || 'authority.localhost.localdomain'}"
+  end
+
+  def namespace_uri(protocol = 'http:')
+    "#{base_uri}/ns/"
+  end
 end

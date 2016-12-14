@@ -16,8 +16,7 @@ class VocabularyInjector < Struct.new(:params)
   end
 
   def sparql_client
-    # @sparql_client ||= SPARQL::Client.new(Settings.triplestore_adapter.url)
-    @sparql_client ||= SPARQL::Client.new(Rails.configuration.triplestore_adapter[:url])
+    @sparql_client ||= SPARQL::Client.new(ENV['TRIPLESTORE_URL'])
   end
 
   def child_node_finder

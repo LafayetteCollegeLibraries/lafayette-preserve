@@ -30,13 +30,20 @@ module CurationConcerns
     def update
       respond_to do |wants|
         wants.json do
+          Rails.logger.warn params
           # See CurationConcerns::Actors::BaseActor
-          attributes = form_class.model_attributes(params[hash_key_for_curation_concern])
+#          attributes = form_class.model_attributes(params[hash_key_for_curation_concern])
+          attributes = params[hash_key_for_curation_concern]
+          Rails.logger.warn attributes
+
           attributes[:rights] = Array(attributes[:rights]) if attributes.key? :rights
           remove_blank_attributes!(attributes)
+          Rails.logger.warn attributes
           curation_concern.attributes = attributes.symbolize_keys
           curation_concern.date_modified = CurationConcerns::TimeService.time_in_utc
           curation_concern.save!
+
+          Rails.logger.warn curation_concern.attributes
         end
         wants.html do
           super
@@ -101,7 +108,18 @@ module CurationConcerns
           # Retrieve the terms
           @vocabularies = []
           collections.each do |collection|
-            @vocabularies += collection.uses_vocabulary.map { |uri| Vocabulary.find(uri) }
+
+            collection_vocabs = []
+            # @vocabularies += collection.uses_vocabulary.map do |uri|
+            collection.uses_vocabulary.map do |uri|
+              begin
+                collection_vocabs << Vocabulary.find(uri)
+              rescue => e
+                Rails.logger.warn "Failed to find the Vocabulary resolved using #{uri}: #{e.message}"
+              end
+            end
+            
+            @vocabularies += collection_vocabs
           end
 
           authorize! :show, @curation_concern

@@ -3,6 +3,12 @@ module LafayetteConcerns::Works
     extend ActiveSupport::Concern
 
     included do
+
+      # Collection for faceting
+      property :bib_collections, predicate: RDF::Vocab::BIBO.Collection do |index|
+        index.as :stored_searchable, :facetable
+      end
+
       # Historical Photograph Collection
 
       # Takes URI's from http://id.loc.gov/authorities/subjects
@@ -70,9 +76,6 @@ module LafayetteConcerns::Works
         index.as :stored_searchable, :facetable
       end
 
-      property :date_original, predicate: ::RDF::Vocab::DC.created do |index|
-        index.as :stored_searchable
-      end
 
       property :format_extent, predicate: ::RDF::Vocab::DC11.format do |index|
         index.as :stored_searchable

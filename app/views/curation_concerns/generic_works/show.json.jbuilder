@@ -1,5 +1,7 @@
 json.extract! @curation_concern, *[:id] + @curation_concern.class.fields.select {|f| ![:has_model].include? f }
+json.representative_id @curation_concern.representative.id
 json.thumbnail_path @curation_concern.thumbnail_path
+json.iiif_images @curation_concern.iiif_images
 json.uses_vocabulary @vocabularies do |vocabulary|
   json.uri vocabulary.rdf_subject.to_s
   json.label vocabulary.label

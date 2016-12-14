@@ -1,7 +1,9 @@
 class GraphToTerms < Struct.new(:resource_factory, :graph)
   attr_reader :klass
 
-  def terms
+  def terms(options = {})
+    klass = options.fetch(:klass, Term)
+
     graph.each_statement.group_by(&:subject).map do |subject, triples|
       type_of_graph(triples)
       t = klass.new(subject)
@@ -14,8 +16,8 @@ class GraphToTerms < Struct.new(:resource_factory, :graph)
     # iterate through the objects of each of the triples to determine what
     # type of vocabulary, predicate, or term this graph is representing so
     # that the proper type of repository can be persisted
-    @klass = nil
-    triples.each do |t|      
+
+    triples.each do |t|
       if @klass == Term or @klass.nil?
         case t.object
           # when Vocabulary.type

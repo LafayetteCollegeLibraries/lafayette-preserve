@@ -11,6 +11,14 @@ class Vocabulary < Term
   property :domain, :predicate => RDF::RDFS.domain
   property :is_referenced_by, :predicate => RDF::Vocab::DC.isReferencedBy # Reference the URI for predicates used to model attributes which are controlled
 
+  delegate :vocabulary_id, :leaf, :to => :term_uri, :prefix => true
+
+  def include?(term)
+    segments = path.split('/')
+    term_segments = term.path.split('/')
+    term_segments.first == segments.first
+  end
+
   def children
     vocab_with_children
   end
@@ -22,25 +30,37 @@ class Vocabulary < Term
 
   def relative_path
     # Get the URI segment used for the vocabulary
-    
-    uri_segments = rdf_subject.to_s.split("http://#{Rails.application.routes.default_url_options[:vocab_domain]}/ns/")
+    uri_segments = rdf_subject.to_s.split("http://#{ENV['VOCAB_DOMAIN'] || 'authority.localhost.localdomain'}/ns/")
     '/' + ['vocabularies', uri_segments.last].join('/') + '.json'
   end
 
   def persist!
     destroy
+    Rails.logger.warn 'trace persistence'
+    statements.each do |statement|
+      Rails.logger.warn statement
+    end
+
     repository.insert(statements)
   end
 
   def self.controls_for(property) # Should be something comparable to range/domain in RDF
     # Query for vocabularies which control a given property
-
-    sparql_client ||= SPARQL::Client.new(Rails.configuration.triplestore_adapter[:url])
+    sparql_client ||= SPARQL::Client.new(ENV['TRIPLESTORE_URL'])
     query_graph = ControlledQuery.new(sparql_client, property.predicate).run
 
     query_graph.subjects.map do |subject|
       Vocabulary.find(subject)
     end
+  end
+
+  def self.find(uri)
+    # Not certain why, but this invokes RestClient#send_delete_request when Vocabulary or Term is instantiated?
+    query_graph = SingleQuery.new(sparql_client, RDF::URI.new(uri)).run
+
+    results = GraphToTerms.new(repository, query_graph).terms(klass: self)
+    raise ActiveTriples::NotFound if results.length == 0
+    results.sort_by{|i| i.rdf_subject.to_s.downcase}.first
   end
 
   private
