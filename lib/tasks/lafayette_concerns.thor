@@ -57,7 +57,7 @@ class Metadb < Thor
 
   desc "ingest_bag", "ingest a ZIP-compressed Bag"
   option :bag, :aliases => "-b", :desc => "ZIP-compressed Bag", :required => true
-  option :project_name, :aliases => "-P", :desc => "project", :required => true
+  option :private, :aliases => "-p", :desc => "privately accessible", :type => :boolean, :default => false
   def ingest_bag
 
     user = User.find_by(email: 'griffinj@lafayette.edu')
@@ -235,14 +235,28 @@ class Metadb < Thor
     ### Add the file to a new FileSet
     ## AttachFilesActor#attach_file
 
-    curation_concern.visibility = Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
+    if options[:private]
+      curation_concern.visibility = Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
+    else
+      curation_concern.visibility = Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
+    end
     
     files = []
     file_sets = []
 
-    # Ensure that the last layer is used for the derivative
-    `/usr/bin/env convert data/#{item_name}.tif[0] data/#{item_name}_0.tif`
-    front_file = File.new("data/#{item_name}_0.tif", 'rb')
+    tif_image_path = "data/#{item_name}.tif"
+    pdf_doc_path = "data/#{item_name}.pdf"
+
+    if File.file?(tif_image_path)
+
+      # Ensure that the last layer is used for the derivative
+      `/usr/bin/env convert data/#{item_name}.tif[0] data/#{item_name}_0.tif`
+      front_file = File.new("data/#{item_name}_0.tif", 'rb')
+    elsif File.file?(pdf_doc_path)
+
+      front_file = File.new(pdf_doc_path, 'rb')
+    end
+
     files << front_file
 
     back_files = Dir.glob("data/#{item_name}b*")
@@ -312,10 +326,13 @@ class Metadb < Thor
       Hydra::Derivatives::ImageDerivatives.create(filename,
                                                   outputs: [{ label: :thumbnail, format: 'png', size: '175x175', url: derivative_url }])
 
-      derivative_url = CurationConcerns::DerivativePath.derivative_path_for_reference(file_set, 'jp2')
-      #    Hydra::Derivatives::ImageDerivatives.create(filename,
-      #                                                outputs: [{ label: :jp2, format: 'jp2', url: derivative_url }])
-      `/usr/bin/env convert #{filename} -define numrlvls=7 -define jp2:tilewidth=1024 -define jp2:tileheight=1024 -define jp2:rate=0.02348 -define jp2:prg=rpcl -define jp2:mode=int -define jp2:prcwidth=16383 -define jp2:prcheight=16383 -define jp2:cblkwidth=64 -define jp2:cblkheight=64 -define jp2:sop #{derivative_url}`
+      if File.file?(tif_image_path)
+
+        derivative_url = CurationConcerns::DerivativePath.derivative_path_for_reference(file_set, 'jp2')
+        #    Hydra::Derivatives::ImageDerivatives.create(filename,
+        #                                                outputs: [{ label: :jp2, format: 'jp2', url: derivative_url }])
+        `/usr/bin/env convert #{filename} -define numrlvls=7 -define jp2:tilewidth=1024 -define jp2:tileheight=1024 -define jp2:rate=0.02348 -define jp2:prg=rpcl -define jp2:mode=int -define jp2:prcwidth=16383 -define jp2:prcheight=16383 -define jp2:cblkwidth=64 -define jp2:cblkheight=64 -define jp2:sop #{derivative_url}`
+      end
 
       # Reload from Fedora and reindex for thumbnail and extracted text
       file_set.reload

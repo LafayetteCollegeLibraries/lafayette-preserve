@@ -69,6 +69,11 @@ module LafayetteConcerns
       Rails.configuration.absolute_url + path
     end
 
+    def download_path
+      path = Rails.application.routes.url_helpers.download_path(thumbnail.id)
+      Rails.configuration.absolute_url + path
+    end
+
     def jp2_path
       path = Rails.application.routes.url_helpers.download_path(representative.id,
                                                                 file: 'jp2')
