@@ -22,9 +22,9 @@ class GraphToTerms < Struct.new(:resource_factory, :graph)
         case t.object
           # when Vocabulary.type
           when 'http://purl.org/dc/dcam/VocabularyEncodingScheme'
-          @klass = Vocabulary
+          @klass = LafayetteConcerns::Vocabulary
         else
-          @klass = Term
+          @klass = LafayetteConcerns::Term
         end
       end
     end

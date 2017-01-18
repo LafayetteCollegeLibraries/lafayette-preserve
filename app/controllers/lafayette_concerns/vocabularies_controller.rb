@@ -55,7 +55,6 @@ class VocabulariesController < ApplicationController
         super
       end
     end
-
   end
 
   def deprecate
@@ -105,21 +104,17 @@ class VocabulariesController < ApplicationController
           end
         end
 
-        Rails.logger.warn @vocabulary.attributes
-
         attributes.each_pair do |attr_name, value|
           @vocabulary.write_attribute(attr_name, attributes.fetch(attr_name, @vocabulary.read_attribute(attr_name)))
         end
-
-        Rails.logger.warn @vocabulary.attributes
-
+        
         # If this is a PUT request, remove all Terms
         if request.put?
           @vocabulary.children.each do |term|
             term.destroy
           end
         end
-
+        
         terms_attributes.each do |term_attributes|
           # Create the Term if it does not exist
           begin
@@ -152,25 +147,25 @@ class VocabulariesController < ApplicationController
             @term = e.term
             render status: 400, layout:'400_term'
           end
-
+        
           term_attributes.delete(:uri)
-
+        
           # If the Term exists, ensure that those attributes which are not overwritten are preserved (if this is a PATCH request)
           if request.patch?
             term_attributes = term.to_h.merge(term_attributes) { |key, old_attr, new_attr| new_attr.empty? ? old_attr : new_attr }
           end
-
+        
           # To be determined: Is this proper to the understanding of PATCH vs. PUT?  If "terms" captures the entire set of entities, is not a PATCH request for a Vocabulary essentially a PUT request for each Term?
           # Probably best not to undertake this approach; otherwise, updating only select attributes for Term resources will require a series of PUT requests to the Term service endpoints
-
+        
           # Update the Term attributes
           term_attributes.each_pair do |attr_name, value|
             term.write_attribute(attr_name, term_attributes.fetch(attr_name, term.read_attribute(attr_name)))
           end
-
+        
           term.persist!
         end
-
+      
         @vocabulary.persist!
       end
 
@@ -201,7 +196,6 @@ class VocabulariesController < ApplicationController
       format.json do
         uri = "#{namespace_uri}#{params[:id]}"
         @vocabulary = Vocabulary.find(uri)
-
         render 'show', status: :ok
       end
     end

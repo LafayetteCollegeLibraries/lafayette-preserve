@@ -30,7 +30,6 @@ module CurationConcerns
     def update
       respond_to do |wants|
         wants.json do
-          Rails.logger.warn params
           # See CurationConcerns::Actors::BaseActor
 #          attributes = form_class.model_attributes(params[hash_key_for_curation_concern])
           attributes = params[hash_key_for_curation_concern]
@@ -38,12 +37,9 @@ module CurationConcerns
 
           attributes[:rights] = Array(attributes[:rights]) if attributes.key? :rights
           remove_blank_attributes!(attributes)
-          Rails.logger.warn attributes
           curation_concern.attributes = attributes.symbolize_keys
           curation_concern.date_modified = CurationConcerns::TimeService.time_in_utc
           curation_concern.save!
-
-          Rails.logger.warn curation_concern.attributes
         end
         wants.html do
           super
@@ -83,8 +79,6 @@ module CurationConcerns
           curation_concern.attributes = attributes.symbolize_keys
           curation_concern.date_modified = CurationConcerns::TimeService.time_in_utc
           curation_concern.save!
-
-          
         end
         wants.html { super }
       end

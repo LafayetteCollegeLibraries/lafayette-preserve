@@ -1,6 +1,6 @@
 # Generated via
 #  `rails generate curation_concerns:work GenericWork`
-require 'rails_helper'
+require 'spec_helper'
 include Warden::Test::Helpers
 
 feature 'Create a GenericWork' do
@@ -16,11 +16,11 @@ feature 'Create a GenericWork' do
       login_as user
     end
 
-    scenario do
-      visit new_curation_concerns_generic_work_path
-      fill_in 'Title', with: 'Test GenericWork'
-      click_button 'Save'
-      expect(page).to have_content 'Test GenericWork'
-    end
+#    scenario do
+#      visit new_curation_concerns_generic_work_path
+#      fill_in 'Title', with: 'Test GenericWork'
+#      click_button 'Save'
+#      expect(page).to have_content 'Test GenericWork'
+#    end
   end
 end

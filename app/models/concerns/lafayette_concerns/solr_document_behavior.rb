@@ -7,10 +7,6 @@ module LafayetteConcerns
       date_field('date_original')
     end
 
-    def foo
-      'bar'
-    end
-
     def date_artifact_upper
       #date_field('date_artifact_upper')
       field = first(Solrizer.solr_name('date_artifact_upper', :stored_sortable, type: :date))
@@ -24,7 +20,6 @@ module LafayetteConcerns
     def date_image_lower
       date_field('date_image_upper')
     end
-
     def date_image_lower
       date_field('date_image_lower')
     end
