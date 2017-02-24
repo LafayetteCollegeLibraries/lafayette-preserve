@@ -1,10 +1,10 @@
-class VocabulariesController < ApplicationController
+class LafayetteConcerns::VocabulariesController < ApplicationController
   delegate :vocabulary_form_repository,  :all_vocabs_query, :to => :injector
   delegate :deprecate_vocabulary_form_repository, :to => :deprecate_injector
 
   def index
     # Filter for the "root" vocabulary namespace
-    @vocabularies = Vocabulary.all.reject { |vocab| vocab.rdf_subject == namespace_uri }
+    @vocabularies = ::Vocabulary.all.reject { |vocab| vocab.rdf_subject == namespace_uri }
   end
 
   def new
@@ -19,9 +19,9 @@ class VocabulariesController < ApplicationController
         attributes = params[:vocabulary]
 
         if attributes.include? :uri
-          @vocabulary = Vocabulary.new(attributes.delete(:uri))
+          @vocabulary = ::Vocabulary.new(attributes.delete(:uri))
         else
-          @vocabulary = Vocabulary.new(RDF::Node.new)
+          @vocabulary = ::Vocabulary.new(RDF::Node.new)
         end
 
         terms_attributes = attributes.delete(:terms)
@@ -75,7 +75,7 @@ class VocabulariesController < ApplicationController
     # uri = "#{namespace_uri}#{id}"
 
     begin
-      @vocabulary = Vocabulary.find(uri)
+      @vocabulary = ::Vocabulary.find(uri)
       @vocabulary.destroy
     rescue ActiveTriples::NotFound
       render status: 404, layout:'404'
@@ -92,7 +92,7 @@ class VocabulariesController < ApplicationController
         vocab_uri = "http://#{ENV['VOCAB_DOMAIN'] || 'authority.localhost.localdomain'}/ns/#{id}"
         # vocab_uri = "#{namespace_uri}#{id}"
 
-        @vocabulary = Vocabulary.find_or_initialize_by(uri: vocab_uri)
+        @vocabulary = ::Vocabulary.find_or_initialize_by(uri: vocab_uri)
 
         terms_attributes = attributes.delete(:terms)
         terms_attributes = [] if terms_attributes.nil?
@@ -195,7 +195,7 @@ class VocabulariesController < ApplicationController
     respond_to do |format|
       format.json do
         uri = "#{namespace_uri}#{params[:id]}"
-        @vocabulary = Vocabulary.find(uri)
+        @vocabulary = ::Vocabulary.find(uri)
         render 'show', status: :ok
       end
     end

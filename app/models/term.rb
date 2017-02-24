@@ -26,7 +26,26 @@ class Term < ActiveTriples::Resource
   property :alt_label, :predicate => RDF::Vocab::SKOS.altLabel
   property :hidden_label, :predicate => RDF::Vocab::SKOS.hiddenLabel
 
+  # Remove
+  property :title, :predicate => RDF::Vocab::DC.title
+
   validate :not_blank_node
+
+  # Remove
+  def children
+    vocab_with_children
+  end
+
+  def absolute_path
+    uri_segments = rdf_subject.to_s.split("/ns/")
+    Rails.configuration.absolute_url + ['/vocabularies', uri_segments.last].join('/') + '.json'
+  end
+  def vocab_with_children
+    injector = TermInjector.new
+    vocab = TermWithChildren.new(self, injector.child_node_finder)
+    vocab.children
+  end
+  ###
 
   def namespace
     "#{rdf_subject.scheme}://#{rdf_subject.host}/ns/"

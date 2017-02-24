@@ -39,7 +39,7 @@ module ActiveTriplesAdapter
         end
       end
 
-      results.sort_by{|i| i.rdf_subject.to_s.downcase}
+      results.sort_by { |i| i.rdf_subject.to_s.downcase }
     end
 
     def find(uri)

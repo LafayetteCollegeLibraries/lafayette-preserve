@@ -36,11 +36,6 @@ class Vocabulary < Term
 
   def persist!
     destroy
-    Rails.logger.warn 'trace persistence'
-    statements.each do |statement|
-      Rails.logger.warn statement
-    end
-
     repository.insert(statements)
   end
 
@@ -61,6 +56,11 @@ class Vocabulary < Term
     results = GraphToTerms.new(repository, query_graph).terms(klass: self)
     raise ActiveTriples::NotFound if results.length == 0
     results.sort_by{|i| i.rdf_subject.to_s.downcase}.first
+  end
+
+  def self.all(*args)
+    results = super(*args)
+    results.reject { |term| not term.is_a? Vocabulary }
   end
 
   private
