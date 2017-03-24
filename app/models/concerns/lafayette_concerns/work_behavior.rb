@@ -44,13 +44,11 @@ module LafayetteConcerns
 
     def to_solr(solr_doc = {})
       super.tap do |doc|
-        [
-         'date_original',
+        ['date_original',
          'date_artifact_upper',
          'date_artifact_lower',
          'date_image_upper',
-         'date_image_lower'
-        ].each do |attr_name|
+         'date_image_lower'].each do |attr_name|
           field_name = Solrizer.solr_name(attr_name, :stored_sortable, type: :date)
           fields = attributes[attr_name]
           doc[field_name] = fields.map { |field| Date.parse(field).xmlschema }
@@ -64,8 +62,7 @@ module LafayetteConcerns
     end
 
     def thumbnail_path
-      path = Rails.application.routes.url_helpers.download_path(thumbnail.id,
-                                                                file: 'thumbnail')
+      path = Rails.application.routes.url_helpers.download_path(thumbnail.id, file: 'thumbnail')
       Rails.configuration.absolute_url + path
     end
 
@@ -75,22 +72,14 @@ module LafayetteConcerns
     end
 
     def jp2_path
-      path = Rails.application.routes.url_helpers.download_path(representative.id,
-                                                                file: 'jp2')
+      path = Rails.application.routes.url_helpers.download_path(representative.id, file: 'jp2')
       Rails.configuration.absolute_url + path
     end
 
     def iiif_images
-      #file_sets.map do |representative|
-      member_ids.map do |representative_id|
-#        response = Faraday.get("#{ENV['IMAGE_SERVER_URI']}/#{representative_id}/info.json")
-#        image = JSON.parse(response.body)
-#        image = {"profile": ["http://iiif.io/api/image/2/level2.json", {"supports": ["canonicalLinkHeader", "profileLinkHeader", "mirroring", "rotationArbitrary", "sizeAboveFull", "regionSquare"], "qualities": ["default", "bitonal", "gray", "color"], "formats": ["jpg", "png", "gif", "webp"]}], "tiles": [{"width": 1024, "scaleFactors": [1, 2, 4, 8, 16, 32]}], "protocol": "http://iiif.io/api/image", "sizes": [{"width": 104, "height": 148}, {"width": 207, "height": 295}, {"width": 413, "height": 590}, {"width": 825, "height": 1179}, {"width": 1650, "height": 2357}, {"width": 3299, "height": 4713}], "height": 4713, "width": 3299, "@context": "http://iiif.io/api/image/2/context.json"}
 
-        "http://metadb.stage.lafayette.edu/#{representative_id}"
-#        image['@id'] = "http://metadb.stage.lafayette.edu/#{representative_id}"
-#        image['@id'] = "#{ENV['IMAGE_SERVER_URI']}/#{representative_id}/info.json"
-#        image
+      member_ids.map do |representative_id|
+        "#{ENV['IMAGE_SERVER_URI'] || 'http://localhost.localdomain/loris'}/loris/#{representative_id}"
       end
     end
   end

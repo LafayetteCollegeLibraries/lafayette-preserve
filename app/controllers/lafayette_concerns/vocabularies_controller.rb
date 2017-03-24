@@ -70,7 +70,6 @@ class VocabulariesController < ApplicationController
     # Special handling for blank nodes
     id = params[:id]
     uri = "http://#{ENV['VOCAB_DOMAIN'] || 'authority.localhost.localdomain'}/ns/#{id}"
-    # uri = "#{namespace_uri}#{id}"
 
     begin
       @vocabulary = LafayetteConcerns::Vocabulary.find(uri)
@@ -88,7 +87,6 @@ class VocabulariesController < ApplicationController
         attributes = params.fetch(:vocabulary, {})
         id = params[:id]
         vocab_uri = "http://#{ENV['VOCAB_DOMAIN'] || 'authority.localhost.localdomain'}/ns/#{id}"
-        # vocab_uri = "#{namespace_uri}#{id}"
 
         @vocabulary = LafayetteConcerns::Vocabulary.find_or_initialize_by(uri: vocab_uri)
 
@@ -98,24 +96,13 @@ class VocabulariesController < ApplicationController
         # If this is a PUT request, remove all attributes
         if request.put?
           @vocabulary.class.properties.keys.each do |attr_name|
-            @vocabulary.write_attribute(attr_name, attributes.fetch(attr_name, []))
+            @vocabulary.write_attribute(attr_name, [])
           end
         end
 
-        puts 'TRACE'
-        puts attributes
-
         attributes.each_pair do |attr_name, value|
-          puts 'TRACE2'
-          puts attr_name
-          puts 'Current value: '
-          puts @vocabulary.read_attribute(attr_name)
-          puts 'New value: '
-          puts attributes.fetch(attr_name)
-          
           @vocabulary.write_attribute(attr_name, attributes.fetch(attr_name, @vocabulary.read_attribute(attr_name)))
-          puts 'Updated value: '
-          puts @vocabulary.read_attribute(attr_name)
+          @vocabulary.persist!
         end
         
         # If this is a PUT request, remove all Terms
@@ -124,7 +111,7 @@ class VocabulariesController < ApplicationController
             term.destroy
           end
         end
-        
+                
         terms_attributes.each do |term_attributes|
           # Create the Term if it does not exist
           begin

@@ -18,7 +18,7 @@ module LafayetteConcerns::Works
         index.as :stored_searchable, :facetable
       end
 
-      # Takes URI's from a local resources (an LDF server? a data dump? authority.lafayette.edu?)
+      # Takes URI's from a local resources (an LDF server?)
       property :creator_photographer, predicate: ::RDF::Vocab::DC11.creator do |index|
         index.as :stored_searchable, :facetable
       end
@@ -45,7 +45,7 @@ module LafayetteConcerns::Works
       end
 
       # McKelvy House Collection
-      # Takes URI's from a local resources (an LDF server? a data dump? authority.lafayette.edu?)
+      # Takes URI's from a local resources (an LDF server? a data dump?)
       property :creator_maker, predicate: ::RDF::Vocab::DC11.creator do |index|
         index.as :stored_searchable, :facetable
       end
@@ -111,8 +111,6 @@ module LafayetteConcerns::Works
       property :rights_digital, predicate: ::RDF::Vocab::DC.rights do |index|
         index.as :stored_searchable
       end
-
-      
     end
   end
 end

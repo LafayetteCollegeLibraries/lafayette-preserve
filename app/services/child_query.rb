@@ -14,6 +14,6 @@ class ChildQuery < Struct.new(:sparql_client, :parent_uri)
   end
 
   def query
-    sparql_client.query("SELECT * WHERE { ?s ?p ?o . FILTER(STRSTARTS(STR(?s), \"#{parent_uri}\")) }")
+    sparql_client.query("SELECT * WHERE { ?s ?p ?o . FILTER(STRSTARTS(STR(?s), \"#{parent_uri}\/\")) }")
   end
 end

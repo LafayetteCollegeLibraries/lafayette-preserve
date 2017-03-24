@@ -37,18 +37,9 @@ module LafayetteConcerns
     config.active_record.raise_in_transactional_callbacks = true
 
     config.autoload_paths += %W(#{config.root}/lib)
-    config.autoload_paths += %W(#{config.root}/app/injectors) # Uncertain as to why this is needed
+    config.autoload_paths += %W(#{config.root}/app/injectors)
     config.autoload_paths += %W(#{config.root}/app/decorators)
 
     config.absolute_url = ENV['ABSOLUTE_URL'] || 'http://localhost'
-
-    #    config.triplestore_adapter = config_for(:graphstore)
-    # puts 'trace config'
-    # blazegraph_url = ENV['RAILS_TRIPLESTORE_URL'] || 'http://localhost:8084/bigdata/sparql'
-    # config.triplestore_adapter = { type: 'blazegraph', url: blazegraph_url }
-
-# triplestore_adapter:
-#   type: 'blazegraph'
-#   url: "http://localhost:9999/blazegraph/namespace/development/sparql"
   end
 end

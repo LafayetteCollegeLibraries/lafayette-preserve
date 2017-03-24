@@ -6,11 +6,13 @@ module ActiveTriplesAdapter
     end
 
     def read_attribute(attr_name)
-      send(attr_name)
+      getter = attr_name.to_sym
+      send(getter)
     end
 
     def write_attribute(attr_name, value)
-      send("#{attr_name}=", value)
+      setter = "#{attr_name}=".to_sym
+      send(setter, value)
     end
 
     def destroy
