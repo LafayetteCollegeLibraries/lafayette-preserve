@@ -2,9 +2,7 @@ require 'spec_helper'
 
 describe 'lafayette_concerns/vocabularies/show.json.jbuilder' do
   let(:vocabulary) do
-    # FactoryGirl.create(:generic_work)
-
-    vocab = LafayetteConcerns::Vocabulary.new('http://namespace.org/ns/testVocabulary')
+    vocab = LafayetteConcerns::Vocabulary.new('http://authority.localhost.localdomain/ns/testVocabulary')
     vocab.persist!
     vocab
   end
@@ -21,6 +19,5 @@ describe 'lafayette_concerns/vocabularies/show.json.jbuilder' do
     expect(json['alt_label']).to match_array vocabulary.alt_label
     expect(json['pref_label']).to match_array vocabulary.pref_label
     expect(json['hidden_label']).to match_array vocabulary.hidden_label
-    expect(json['terms']).to match_array vocabulary.terms
   end
 end

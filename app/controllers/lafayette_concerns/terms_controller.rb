@@ -8,7 +8,8 @@ class TermsController < ApplicationController
   def show
     respond_to do |format|
 
-      uri = "http://#{Rails.application.routes.default_url_options[:vocab_domain]}/ns/#{params[:vocabulary_id]}/#{params[:id]}"
+      # uri = "http://#{Rails.application.routes.default_url_options[:vocab_domain]}/ns/#{params[:vocabulary_id]}/#{params[:id]}"
+      uri = "http://#{ENV['VOCAB_DOMAIN'] || 'authority.localhost.localdomain'}/ns/#{params[:vocabulary_id]}/#{params[:id]}"
 
       begin
         @term = Term.find(uri)

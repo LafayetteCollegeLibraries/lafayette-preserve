@@ -5,9 +5,9 @@ describe LafayetteConcerns::VocabulariesController, :type => :controller do
   before { sign_in user }
 
   before(:example) do
-    @vocab = LafayetteConcerns::Vocabulary.new('http://namespace.org/ns/testVocabulary')
+    @vocab = LafayetteConcerns::Vocabulary.new('http://authority.localhost.localdomain/ns/testVocabulary')
     @vocab.persist!
-    @term = LafayetteConcerns::Term.new('http://namespace.org/ns/testVocabulary/testTerm')
+    @term = LafayetteConcerns::Term.new('http://authority.localhost.localdomain/ns/testVocabulary/testTerm')
     @term.persist!
   end
 
@@ -17,8 +17,8 @@ describe LafayetteConcerns::VocabulariesController, :type => :controller do
   end
 
   context "JSON" do
-#    let(:resource) { LafayetteConcerns::Vocabulary.new('http://namespace.org/ns/testVocabulary').persist! }
-#    let(:term_resource) { LafayetteConcerns::Term.new('http://namespace.org/ns/testVocabulary/testTerm').persist! }
+#    let(:resource) { LafayetteConcerns::Vocabulary.new('http://authority.localhost.localdomain/ns/testVocabulary').persist! }
+#    let(:term_resource) { LafayetteConcerns::Term.new('http://authority.localhost.localdomain/ns/testVocabulary/testTerm').persist! }
 
 #    let(:resource) { create(:vocabulary) }
 #    let(:term_resource) { create(:term) }
@@ -37,7 +37,7 @@ describe LafayetteConcerns::VocabulariesController, :type => :controller do
     end
 
     describe 'replacing a vocabulary with different attributes and terms' do
-      before { put :update, id: 'testVocabulary', vocabulary: { label: ['replaced label'], terms: [ { uri: 'http://namespace.org/ns/testVocabulary/testTerm', label: ['replaced term label'] } ] }, format: :json }
+      before { put :update, id: 'testVocabulary', vocabulary: { label: ['replaced label'], terms: [ { uri: 'http://authority.localhost.localdomain/ns/testVocabulary/testTerm', label: ['replaced term label'] } ] }, format: :json }
       subject { response }
       it "returns 200" do
 
@@ -46,7 +46,7 @@ describe LafayetteConcerns::VocabulariesController, :type => :controller do
     end
 
     describe 'replacing a vocabulary using a foreign (or non-existent) term' do
-      before { put :update, id: 'testVocabulary', vocabulary: { label: ['replaced label'], terms: [ { uri: 'http://namespace.org/ns/anotherVocabulary/testTerm', label: ['replaced term label'] } ] }, format: :json }
+      before { put :update, id: 'testVocabulary', vocabulary: { label: ['replaced label'], terms: [ { uri: 'http://authority.localhost.localdomain/ns/anotherVocabulary/testTerm', label: ['replaced term label'] } ] }, format: :json }
       subject { response }
       it "returns 400" do
 
@@ -64,7 +64,7 @@ describe LafayetteConcerns::VocabulariesController, :type => :controller do
     end
 
     describe 'updating the terms for a vocabulary' do
-      before { patch :update, id: 'testVocabulary', vocabulary: { label: ['updated label'], alt_label: ['updated alternate label'], terms: [ { uri: 'http://namespace.org/ns/testVocabulary/testTerm', label: ['updated term label'] } ] }, format: :json }
+      before { patch :update, id: 'testVocabulary', vocabulary: { label: ['updated label'], alt_label: ['updated alternate label'], terms: [ { uri: 'http://authority.localhost.localdomain/ns/testVocabulary/testTerm', label: ['updated term label'] } ] }, format: :json }
       subject { response }
       it "returns 200, renders show template sets location header" do
 

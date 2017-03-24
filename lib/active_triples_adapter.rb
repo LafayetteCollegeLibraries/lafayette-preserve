@@ -46,8 +46,8 @@ module ActiveTriplesAdapter
       # Not certain why, but this invokes RestClient#send_delete_request when Vocabulary or Term is instantiated?
       query_graph = SingleQuery.new(sparql_client, RDF::URI.new(uri)).run
 
-      results = GraphToTerms.new(repository, query_graph).terms
-      raise ActiveTriples::NotFound if results.length == 0
+      results = GraphToTerms.new(repository, query_graph).terms(klass: self)
+      raise ActiveTriples::NotFound.new(uri) if results.length == 0
       results.sort_by{|i| i.rdf_subject.to_s.downcase}.first
     end
 

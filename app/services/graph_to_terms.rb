@@ -2,7 +2,7 @@ class GraphToTerms < Struct.new(:resource_factory, :graph)
   attr_reader :klass
 
   def terms(options = {})
-    klass = options.fetch(:klass, Term)
+    @klass = options.fetch(:klass, LafayetteConcerns::Term)
 
     graph.each_statement.group_by(&:subject).map do |subject, triples|
       type_of_graph(triples)
@@ -18,7 +18,7 @@ class GraphToTerms < Struct.new(:resource_factory, :graph)
     # that the proper type of repository can be persisted
 
     triples.each do |t|
-      if @klass == Term or @klass.nil?
+      if klass == Term or klass.nil?
         case t.object
           # when Vocabulary.type
           when 'http://purl.org/dc/dcam/VocabularyEncodingScheme'

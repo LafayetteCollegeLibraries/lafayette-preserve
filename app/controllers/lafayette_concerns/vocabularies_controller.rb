@@ -1,10 +1,11 @@
-class LafayetteConcerns::VocabulariesController < ApplicationController
+module LafayetteConcerns
+class VocabulariesController < ApplicationController
   delegate :vocabulary_form_repository,  :all_vocabs_query, :to => :injector
   delegate :deprecate_vocabulary_form_repository, :to => :deprecate_injector
 
   def index
     # Filter for the "root" vocabulary namespace
-    @vocabularies = ::Vocabulary.all.reject { |vocab| vocab.rdf_subject == namespace_uri }
+    @vocabularies = LafayetteConcerns::Vocabulary.all.reject { |vocab| vocab.rdf_subject == namespace_uri }
   end
 
   def new
@@ -19,9 +20,9 @@ class LafayetteConcerns::VocabulariesController < ApplicationController
         attributes = params[:vocabulary]
 
         if attributes.include? :uri
-          @vocabulary = ::Vocabulary.new(attributes.delete(:uri))
+          @vocabulary = LafayetteConcerns::Vocabulary.new(attributes.delete(:uri))
         else
-          @vocabulary = ::Vocabulary.new(RDF::Node.new)
+          @vocabulary = LafayetteConcerns::Vocabulary.new(RDF::Node.new)
         end
 
         terms_attributes = attributes.delete(:terms)
@@ -51,9 +52,6 @@ class LafayetteConcerns::VocabulariesController < ApplicationController
         @vocabulary.persist!
       end
 
-      format.html do
-        super
-      end
     end
   end
 
@@ -75,7 +73,7 @@ class LafayetteConcerns::VocabulariesController < ApplicationController
     # uri = "#{namespace_uri}#{id}"
 
     begin
-      @vocabulary = ::Vocabulary.find(uri)
+      @vocabulary = LafayetteConcerns::Vocabulary.find(uri)
       @vocabulary.destroy
     rescue ActiveTriples::NotFound
       render status: 404, layout:'404'
@@ -87,12 +85,12 @@ class LafayetteConcerns::VocabulariesController < ApplicationController
 
       format.json do
 
-        attributes = params[:vocabulary]
+        attributes = params.fetch(:vocabulary, {})
         id = params[:id]
         vocab_uri = "http://#{ENV['VOCAB_DOMAIN'] || 'authority.localhost.localdomain'}/ns/#{id}"
         # vocab_uri = "#{namespace_uri}#{id}"
 
-        @vocabulary = ::Vocabulary.find_or_initialize_by(uri: vocab_uri)
+        @vocabulary = LafayetteConcerns::Vocabulary.find_or_initialize_by(uri: vocab_uri)
 
         terms_attributes = attributes.delete(:terms)
         terms_attributes = [] if terms_attributes.nil?
@@ -104,8 +102,20 @@ class LafayetteConcerns::VocabulariesController < ApplicationController
           end
         end
 
+        puts 'TRACE'
+        puts attributes
+
         attributes.each_pair do |attr_name, value|
+          puts 'TRACE2'
+          puts attr_name
+          puts 'Current value: '
+          puts @vocabulary.read_attribute(attr_name)
+          puts 'New value: '
+          puts attributes.fetch(attr_name)
+          
           @vocabulary.write_attribute(attr_name, attributes.fetch(attr_name, @vocabulary.read_attribute(attr_name)))
+          puts 'Updated value: '
+          puts @vocabulary.read_attribute(attr_name)
         end
         
         # If this is a PUT request, remove all Terms
@@ -168,10 +178,6 @@ class LafayetteConcerns::VocabulariesController < ApplicationController
       
         @vocabulary.persist!
       end
-
-      format.html do
-        super
-      end
     end
   end
 
@@ -195,7 +201,7 @@ class LafayetteConcerns::VocabulariesController < ApplicationController
     respond_to do |format|
       format.json do
         uri = "#{namespace_uri}#{params[:id]}"
-        @vocabulary = ::Vocabulary.find(uri)
+        @vocabulary = LafayetteConcerns::Vocabulary.find(uri)
         render 'show', status: :ok
       end
     end
@@ -222,4 +228,5 @@ class LafayetteConcerns::VocabulariesController < ApplicationController
   def namespace_uri(protocol = 'http:')
     "#{base_uri}/ns/"
   end
+end
 end

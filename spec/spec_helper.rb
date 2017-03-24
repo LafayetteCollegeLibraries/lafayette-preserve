@@ -164,10 +164,6 @@ RSpec.configure do |config|
     config.include Devise::TestHelpers, type: :controller
   end
 
-#  if Rails::VERSION::MAJOR < 5
-#    config.include BackportTestHelpers, type: :controller
-#  end
-
   # config.include RailsRoutes
   config.include Rails.application.routes.url_helpers
 
