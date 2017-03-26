@@ -2,6 +2,12 @@ module LafayetteConcerns
   module CollectionsControllerBehavior
     extend ActiveSupport::Concern
 
+    included do
+      before_action :authenticate_user!, except: [:show, :update]
+      load_and_authorize_resource except: [:index, :show, :update], instance_name: :collection
+      skip_authorize_resource :only => :update
+    end
+
     def show
       respond_to do |format|
         format.html do
@@ -14,7 +20,10 @@ module LafayetteConcerns
           response = repository.search(collection_search_builder.query)
           collection_document = response.documents.first
           raise CanCan::AccessDenied unless collection_document
+
           @collection = Collection.find(collection_document[:id])
+          @collection.uses_vocabulary = @collection.uses_vocabulary.map { |uri| Vocabulary.find(uri) }
+
           render 'curation_concerns/collections/show', status: :ok
         end
       end

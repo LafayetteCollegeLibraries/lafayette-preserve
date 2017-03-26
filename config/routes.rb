@@ -3,7 +3,9 @@ Rails.application.routes.draw do
   Hydra::BatchEdit.add_routes(self)
   mount Blacklight::Engine => '/'
   
-    concern :searchable, Blacklight::Routes::Searchable.new
+  concern :searchable, Blacklight::Routes::Searchable.new
+#  concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
+#  concerns :range_searchable
 
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
     concerns :searchable
@@ -31,6 +33,13 @@ Rails.application.routes.draw do
       delete 'clear'
     end
   end
+  
+  resources :vocabularies, controller: 'lafayette_concerns/vocabularies'
+  get '/vocabularies', to: 'lafayette_concerns/vocabularies#index'
+  put '/vocabularies', to: 'lafayette_concerns/vocabularies#update'
+  patch '/vocabularies', to: 'lafayette_concerns/vocabularies#update'
+
+  get '/terms/:vocabulary_id/:id', to: 'lafayette_concerns/terms#show'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

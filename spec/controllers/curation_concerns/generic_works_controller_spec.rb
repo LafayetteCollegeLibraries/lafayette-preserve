@@ -1,9 +1,24 @@
-# Generated via
-#  `rails generate curation_concerns:work GenericWork`
-require 'rails_helper'
+require 'spec_helper'
 
 describe CurationConcerns::GenericWorksController do
-  it "has tests" do
-    skip "Add your tests here"
+  let(:user) { create(:user) }
+  before { sign_in user }
+
+  context "JSON" do
+    let(:resource) { create(:generic_work, user: user) }
+    let(:resource_request) { get :show, params: { id: resource, format: :json } }
+    subject { response }
+
+    describe 'updates over REST' do
+
+      before { put :update, { id: resource, generic_work: { title: ['updated title'] }, format: :json } }
+      it "updates the metadata for the GenericWork" do
+        expect(assigns[:curation_concern]).to be_instance_of GenericWork
+        expect(controller).to render_template(:update)
+        expect(response.code).to eq "200"
+        created_resource = assigns[:curation_concern]
+        expect(created_resource.title).to include('updated title')
+      end
+    end
   end
 end

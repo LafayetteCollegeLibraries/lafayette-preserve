@@ -1,0 +1,3 @@
+triplestore_adapter:
+  type: <%= "#{ENV['TRIPLESTORE_TYPE'] || 'blazegraph'}" %>
+  url: <%= "#{ENV['TRIPLESTORE_URL'] || 'localhost4'}" %>

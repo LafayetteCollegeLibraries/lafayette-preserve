@@ -2,6 +2,7 @@ class CatalogController < ApplicationController
   include Hydra::Catalog
   include Hydra::Controller::ControllerBehavior
   include Sufia::Catalog
+  include LafayetteConcerns::Catalog
   include BlacklightAdvancedSearch::Controller
 
   # These before_filters apply the hydra access controls
@@ -14,6 +15,55 @@ class CatalogController < ApplicationController
 
   def self.modified_field
     solr_name('system_modified', :stored_sortable, type: :date)
+  end
+
+  def self.concern_fields
+    [
+     :creator_photographer,
+     :format_medium,
+     :format_size,
+     :date_approximate,
+     :date_range,
+     :creator_maker,
+     :date_original_display,
+     :description_size,
+     :description_note,
+     :subject_lcsh,
+     :publisher_original,
+     :date_original,
+     :format_extent,
+     :description_condition,
+     :description_provenance,
+     :description_series,
+     :identifier_itemnumber,
+     :publisher_digital,
+     :format_digital,
+     :rights_digital,
+     :subject_ocm,
+     :description_critical,
+     :description_indicia,
+     :description_text,
+     :description_inscription,
+     :description_ethnicity,
+     :description_citation,
+     :coverage_location_country,
+     :coverage_location,
+     :creator_company,
+     :relation_seealso,
+     :date_image_upper,
+     :date_image_lower,
+     :title_name,
+     :description_class,
+     :date_birth_display,
+     :coverage_place_birth,
+     :description_military_branch,
+     :description_military_rank,
+     :description_military_unit,
+     :date_death_display,
+     :coverage_place_death,
+     :description_cause_death,
+     :description_honors
+    ]
   end
 
   configure_blacklight do |config|
@@ -42,7 +92,12 @@ class CatalogController < ApplicationController
       qt: "search",
       rows: 10,
       qf: "title_tesim name_tesim"
+
     }
+
+    Rails.logger.warn 'TRACE'
+
+
 
     # solr field configuration for document/show views
     config.index.title_field = solr_name("title", :stored_searchable)
@@ -60,6 +115,34 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name("based_near", :facetable), label: "Location", limit: 5
     config.add_facet_field solr_name("publisher", :facetable), label: "Publisher", limit: 5
     config.add_facet_field solr_name("file_format", :facetable), label: "File Format", limit: 5
+
+    # East Asia Image Collection
+    config.add_facet_field solr_name("subject_ocm", :facetable), label: "Subject.OCM", limit: nil
+    config.add_facet_field solr_name("date_original", :stored_sortable, type: :date), label: "Date.Original", date: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+
+    config.add_facet_field solr_name("date_artifact_upper", :stored_sortable, type: :date), label: "Date.Artifact.Upper", date: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+    config.add_facet_field solr_name("date_artifact_lower", :stored_sortable, type: :date), label: "Date.Artifact.Lower", date: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+    config.add_facet_field solr_name("date_image_upper", :stored_sortable, type: :date), label: "Date.Image.Upper", date: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+    config.add_facet_field solr_name("date_image_lower", :stored_sortable, type: :date), label: "Date.Image.Lower", date: true, range: {
+      assumed_boundaries: [1800, Time.now.year]
+    }
+
+    # Need to create vraEvent/schema.org Events in response to ingestion for EAIC and Silk Road
+
+    # Special Collections and College Archives
+    config.add_facet_field solr_name("subject_loc", :facetable), label: "Subject.LOC", limit: nil
+    config.add_facet_field solr_name("subject_lcsh", :facetable), label: "Subject.LCSH", limit: nil
+    config.add_facet_field solr_name("creator_photographer", :facetable), label: "Creator.Photographer", limit: nil
+    config.add_facet_field solr_name("creator_maker", :facetable), label: "Creator.Maker", limit: nil
+    config.add_facet_field solr_name("publisher_original", :facetable), label: "Publisher.Original", limit: nil
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request

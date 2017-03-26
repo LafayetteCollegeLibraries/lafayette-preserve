@@ -3,30 +3,114 @@ module LafayetteConcerns::Works
     extend ActiveSupport::Concern
 
     included do
-#      property :arkivo_checksum, predicate: ::RDF::URI.new('http://scholarsphere.psu.edu/ns#arkivoChecksum'), multiple: false
 
-#      property :, predicate: ::RDF::URI.new('http://authority.lafayette.edu/ocm#testValue'), multiple: false
-      property :subject_ocm, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#subjectOcm')
-      property :description_critical, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#descriptionCritical')
-      property :description_indicia, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#descriptionIndicia')
-      property :description_text, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#descriptionText')
-      property :description_inscription, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#descriptionInscription')
-      property :description_ethnicity, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#descriptionEthnicity')
-      property :description_citation, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#descriptionCitation')
-      property :coverage_location_country, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#coverageLocationCountry')
-      property :coverage_location, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#coverageLocation')
-      property :format_medium, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#formatMedium')
-      property :creator_maker, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#creatorMaker')
-      property :creator_company, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#creatorCompany')
+      # Collection for faceting
+      property :bib_collections, predicate: RDF::Vocab::BIBO.Collection do |index|
+        index.as :stored_searchable, :facetable
+      end
 
-      property :relation_seealso, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#relationSeealso')
+      # Historical Photograph Collection
 
-      property :date_original, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateOriginal')
-      property :date_artifact_upper, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateArtifactUpper')
-      property :date_artifact_lower, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateArtifactLower')
+      # Takes URI's from http://id.loc.gov/authorities/subjects
+      # Support for Linked Data Fragments?
+      # Support for Questioning Authority?
+      property :subject_loc, predicate: ::RDF::Vocab::DC11.subject do |index|
+        index.as :stored_searchable, :facetable
+      end
 
-      property :date_image_upper, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateImageUpper')
-      property :date_image_lower, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateImageLower')
+      # Takes URI's from a local resources (an LDF server?)
+      property :creator_photographer, predicate: ::RDF::Vocab::DC11.creator do |index|
+        index.as :stored_searchable, :facetable
+      end
+
+      property :format_medium, predicate: ::RDF::Vocab::DC11.format do |index|
+        index.as :stored_searchable
+      end
+
+      property :format_size, predicate: ::RDF::Vocab::DC11.format do |index|
+        index.as :stored_searchable
+      end
+
+      # Not explicitly clear why this is a separate field from the previous "date"
+      # Raise for discussion with archivist and librarians
+      property :date_approximate, predicate: ::RDF::Vocab::DC.created do |index|
+        index.as :stored_searchable
+      end
+
+      # Uncertain as to whether or not this catches a range with "date"; Uncertain of the relationship with "data.approximate"
+      # Ranges are captured as separate resource instances
+      # Dublin Core supports this using http://purl.org/dc/terms/PeriodOfTime [dcterms:PeriodOfTime]
+      property :date_range, predicate: ::RDF::Vocab::DC.created do |index|
+        index.as :stored_searchable
+      end
+
+      # McKelvy House Collection
+      # Takes URI's from a local resources (an LDF server? a data dump?)
+      property :creator_maker, predicate: ::RDF::Vocab::DC11.creator do |index|
+        index.as :stored_searchable, :facetable
+      end
+
+      # Request to deprecate and integrate with "date.original"
+      property :date_original_display, predicate: ::RDF::Vocab::DC.created do |index|
+        index.as :stored_searchable
+      end
+      
+      # What distinguishes this from "format.extent"?
+      property :description_size, predicate: ::RDF::Vocab::DC11.description do |index|
+        index.type :text
+        index.as :stored_searchable
+      end
+
+      # Marquis de Lafayette Prints Collection
+      property :description_note, predicate: ::RDF::Vocab::DC11.description do |index|
+        index.type :text
+        index.as :stored_searchable
+      end
+
+      # Same case as "subject.loc"; Request to deprecate and integrate with "subject_loc"
+      property :subject_lcsh, predicate: ::RDF::Vocab::DC11.subject do |index|
+        index.as :stored_searchable, :facetable
+      end
+      
+      property :publisher_original, predicate: ::RDF::Vocab::DC11.publisher do |index|
+        index.as :stored_searchable, :facetable
+      end
+
+
+      property :format_extent, predicate: ::RDF::Vocab::DC11.format do |index|
+        index.as :stored_searchable
+      end
+
+      property :description_condition, predicate: ::RDF::Vocab::DC11.description do |index|
+        index.type :text
+        index.as :stored_searchable
+      end
+
+      property :description_provenance, predicate: ::RDF::Vocab::DC11.description do |index|
+        index.type :text
+        index.as :stored_searchable
+      end
+
+      property :description_series, predicate: ::RDF::Vocab::DC11.description do |index|
+        index.type :text
+        index.as :stored_searchable
+      end
+
+      property :identifier_itemnumber, predicate: ::RDF::Vocab::DC.identifier do |index|
+        index.as :stored_searchable
+      end
+
+      property :publisher_digital, predicate: ::RDF::Vocab::DC11.publisher do |index|
+        index.as :stored_searchable, :facetable
+      end
+
+      property :format_digital, predicate: ::RDF::Vocab::DC11.format do |index|
+        index.as :stored_searchable, :facetable
+      end
+
+      property :rights_digital, predicate: ::RDF::Vocab::DC.rights do |index|
+        index.as :stored_searchable
+      end
     end
   end
 end

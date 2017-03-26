@@ -1,11 +1,12 @@
-# Generated via
-#  `rails generate curation_concerns:work GenericWork`
 class GenericWork < ActiveFedora::Base
   include ::CurationConcerns::WorkBehavior
   include ::CurationConcerns::BasicMetadata
   include Sufia::WorkBehavior
-#  include LafayetteConcerns::Works::Metadata
   include LafayetteConcerns::WorkBehavior
+  include LafayetteConcerns::EastAsiaWorkBehavior
+  include LafayetteConcerns::SilkRoadWorkBehavior
+  include LafayetteConcerns::CasualtiesWorkBehavior
+# include LafayetteConcerns::ScholarlyWorkBehavior
   self.human_readable_type = 'Work'
   # Change this to restrict which works can be added as a child.
   # self.valid_child_concerns = []
