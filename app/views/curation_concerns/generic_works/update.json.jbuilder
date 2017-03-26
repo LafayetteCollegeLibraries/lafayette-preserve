@@ -19,7 +19,7 @@ json.uses_vocabulary @vocabularies do |vocabulary|
   end
 end
 json.form @curation_concern.class.properties.each do |property|
-  json.authorities Vocabulary.controls_for(property.last) do |authority|
+  json.authorities LafayetteConcerns::Vocabulary.controls_for(property.last) do |authority|
     json.uri authority.rdf_subject.to_s
     json.absolute_path authority.absolute_path
   end
