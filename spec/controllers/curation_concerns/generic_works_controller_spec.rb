@@ -9,11 +9,10 @@ describe CurationConcerns::GenericWorksController do
     let(:resource_request) { get :show, params: { id: resource, format: :json } }
     subject { response }
 
-    describe 'updated' do
+    describe 'updates over REST' do
 
       before { put :update, { id: resource, generic_work: { title: ['updated title'] }, format: :json } }
       it "updates the metadata for the GenericWork" do
-        # Ensure that @curation_concern is set for jbuilder template to use
         expect(assigns[:curation_concern]).to be_instance_of GenericWork
         expect(controller).to render_template(:update)
         expect(response.code).to eq "200"
