@@ -79,7 +79,7 @@ module LafayetteConcerns
     def iiif_images
 
       member_ids.map do |representative_id|
-        "#{ENV['IMAGE_SERVER_URI'] || 'http://localhost.localdomain/loris'}/loris/#{representative_id}"
+        "#{ENV['IMAGE_SERVER_URI'] || 'http://localhost.localdomain'}/loris/#{representative_id}"
       end
     end
   end
