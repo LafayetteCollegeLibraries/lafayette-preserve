@@ -1,13 +1,10 @@
-# LafayetteConcerns
-
-Code: [![Build Status](https://travis-ci.org/LafayetteCollegeLibraries/lafayette_concerns.svg?branch=master)](https://travis-ci.org/LafayetteCollegeLibraries/lafayette_concerns)
-[![Coverage Status](https://coveralls.io/repos/LafayetteCollegeLibraries/lafayette_concerns/badge.svg?branch=master)](https://coveralls.io/r/LafayetteCollegeLibraries/lafayette_concerns?branch=master)
+# LafayettePreserve
 
 A [Sufia](http://sufia.io/) implementation for curating and preserving digital resources for the Lafayette College Libraries.
 
 ## Prerequisites
 
-LafayetteConcerns requires the following software to work:
+As it is based upon Sufia, LafayettePreserve requires the following software to work:
 
 1. Solr version >= 5.x
 1. [Fedora Commons](http://www.fedora-commons.org/) digital repository version >= 4.5.1
@@ -18,6 +15,9 @@ LafayetteConcerns requires the following software to work:
 1. [LibreOffice](#derivatives)
 
 **NOTE: If you do not already have Solr and Fedora instances you can use in your development environment, you may use hydra-jetty (instructions are provided below to get you up and running quickly and with minimal hassle).**
+
+### Support for Controlled Vocabulary Development
+In addition to extending the standard support for the Sufia feature set, we currently only  support [Blazegraph](https://www.blazegraph.com/) in order to manage controlled vocabularies and terms as linked data.
 
 ### Characterization
 
@@ -46,6 +46,54 @@ First, you'll need a working Ruby installation. You can install this via your op
 
 We recommend either Ruby 2.3 or the latest 2.2 version.
 
+# Running LafayettePreserve
+
+## Clone the Git Repository
+``
+git clone https://github.com/LafayetteCollegeLibraries/lafayette-preserve.git
+``
+
+## Install the Gem Dependencies
+``
+bundle install
+``
+
+## Migrate the Rails Database Schema
+``
+rake db:migrate
+``
+
+# Testing LafayettePreserve
+
+``
+rake ci
+``
+
+Or you can performa all of the steps manually using separate terminals:
+
+## Start Solr
+``
+solr_wrapper -p 8985 -d solr/config/ --collection_name hydra-test
+``
+
+## Start fcrepo4
+``
+fcrepo_wrapper -p 8986 --no-jms
+``
+
+## Start Blazegraph
+``
+rake triplestore_adapter:blazegraph:reset
+``
+
+## Execute the Test Suites
+``
+TRIPLESTORE_URL='http://localhost:9999/blazegraph/namespace/test/sparql' rake spec
+``
+
 # Acknowledgments
 
-This software has been developed by [Digital Scholarship Services](https://digital.lafayette.edu/) of the [Lafayette College Libraries](https://library.lafayette.edu/), in close collaboration with the [Project Hydra community](http://projecthydra.org/).
+This software has been developed by [Digital Scholarship Services](https://digital.lafayette.edu/) of the [Lafayette College Libraries](https://library.lafayette.edu/), building heavily upon the collaborative efforts of all members within the [Project Hydra community](http://projecthydra.org/).
+
+# License
+GPL-3.0
