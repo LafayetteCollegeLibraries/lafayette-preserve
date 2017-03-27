@@ -24,43 +24,30 @@ if coverage_needed?
 end
 
 require 'factory_girl'
-# require 'engine_cart'
-# EngineCart.load_application!
 require 'database_cleaner'
 
 require 'devise'
 require 'devise/version'
 require 'mida'
-
 require 'rspec/matchers'
 require 'equivalent-xml/rspec_matchers'
-
 require 'rails-controller-testing' if Rails::VERSION::MAJOR >= 5
-
 require 'rspec/its'
 require 'rspec/rails'
-
 require 'rspec/active_model/mocks'
 require 'capybara/poltergeist'
 require 'capybara/rspec'
 require 'capybara/rails'
-# require 'equivalent-xml'
 
-# require 'support/features'
-# require 'support/backport_test_helpers'
-# require 'support/rake'
+
 require 'byebug' unless ENV['TRAVIS']
+Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 Capybara.default_driver = :rack_test      # This is a faster driver
 Capybara.javascript_driver = :poltergeist # This is slower
 Capybara.default_max_wait_time = ENV['TRAVIS'] ? 30 : 15
 
 ActiveJob::Base.queue_adapter = :inline
-
-# require 'http_logger'
-# HttpLogger.logger = Logger.new(STDOUT)
-# HttpLogger.ignore = [/localhost:8983\/solr/]
-# HttpLogger.colorize = false
 
 if ENV['TRAVIS'] == 'true'
   # Monkey-patches the FITS runner to return the PDF FITS fixture
@@ -91,21 +78,6 @@ else
   end
 end
 
-=begin
-class JsonStrategy
-  def initialize
-    @strategy = FactoryGirl.strategy_by_name(:create).new
-  end
-
-  delegate :association, to: :@strategy
-
-  def result(evaluation)
-    @strategy.result(evaluation).to_json
-  end
-end
-
-FactoryGirl.register_strategy(:json, JsonStrategy)
-=end
 FactoryGirl.definition_file_paths = [File.expand_path("../factories", __FILE__)]
 FactoryGirl.find_definitions
 
@@ -121,9 +93,6 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
-
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-#  config.fixture_path = File.expand_path("../fixtures", __FILE__)
 
   config.use_transactional_fixtures = false
 
