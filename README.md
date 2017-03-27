@@ -1,4 +1,5 @@
 # LafayettePreserve
+[![Build Status](https://travis-ci.org/LafayetteCollegeLibraries/lafayette-preserve.svg?branch=master)](https://travis-ci.org/LafayetteCollegeLibraries/lafayette-preserve) [![Coverage Status](https://coveralls.io/repos/github/LafayetteCollegeLibraries/lafayette-preserve/badge.svg?branch=master)](https://coveralls.io/github/LafayetteCollegeLibraries/lafayette-preserve?branch=master)
 
 A [Sufia](http://sufia.io/) implementation for curating and preserving digital resources for the Lafayette College Libraries.
 
