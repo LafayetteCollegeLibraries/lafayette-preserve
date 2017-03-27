@@ -17,8 +17,11 @@ As it is based upon Sufia, LafayettePreserve requires the following software to 
 
 **NOTE: If you do not already have Solr and Fedora instances you can use in your development environment, you may use hydra-jetty (instructions are provided below to get you up and running quickly and with minimal hassle).**
 
-### Support for Controlled Vocabulary Development
+### Support for Controlled Vocabulary Management
 In addition to extending the standard support for the Sufia feature set, we currently only  support [Blazegraph](https://www.blazegraph.com/) in order to manage controlled vocabularies and terms as linked data.
+
+#### Architecture and Implementation
+Currently, LafayettePreserve borrows heavily from the functionality supported by [the Controlled Vocabulary Manager from Oregon Digital](https://github.com/OregonDigital/ControlledVocabularyManager).
 
 ### Characterization
 
@@ -66,11 +69,7 @@ rake db:migrate
 
 # Testing LafayettePreserve
 
-``
-rake ci
-``
-
-Or you can performa all of the steps manually using separate terminals:
+Currently, one must perform the following steps manually using separate terminals:
 
 ## Start Solr
 ``
