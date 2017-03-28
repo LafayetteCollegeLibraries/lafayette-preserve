@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe TermWithChildren do
   let(:vocabulary) { LafayetteConcerns::Vocabulary.new(uri) }
-  let(:uri) { "http://authority.localhost.localdomain/ns/bla" }
+  let(:uri) { "http://authority.localhost.localdomain/ns/foo" }
   let(:injector) { TermInjector.new }
   subject { TermWithChildren.new(vocabulary, injector.child_node_finder) }
 
@@ -15,10 +15,10 @@ RSpec.describe TermWithChildren do
     end
     context "with children" do
       let(:child) do
-        child = LafayetteConcerns::Term.new(uri+"/1")
+        child = LafayetteConcerns::Term.new(uri+"/term1")
       end
       let(:child_2) do
-        child_2 = LafayetteConcerns::Term.new(uri+"q/2")
+        child_2 = LafayetteConcerns::Term.new(uri+"bar/term2")
       end
       before do
         child.persist!
@@ -42,10 +42,10 @@ RSpec.describe TermWithChildren do
     end
     context "with children" do
       let(:child) do
-        child = LafayetteConcerns::Term.new(uri+"/1")
+        child = LafayetteConcerns::Term.new(uri+"/term1")
       end
       let(:unrelated_term) do
-        unrelated_term = LafayetteConcerns::Term.new(uri+"q/2")
+        unrelated_term = LafayetteConcerns::Term.new(uri+"bar/term2")
       end
       before do
         child.persist!
