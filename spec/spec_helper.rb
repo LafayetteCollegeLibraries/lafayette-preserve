@@ -25,7 +25,6 @@ end
 
 require 'factory_girl'
 require 'database_cleaner'
-
 require 'devise'
 require 'devise/version'
 require 'mida'
@@ -38,9 +37,9 @@ require 'rspec/active_model/mocks'
 require 'capybara/poltergeist'
 require 'capybara/rspec'
 require 'capybara/rails'
-
-
 require 'byebug' unless ENV['TRAVIS']
+
+Dir[Rails.root.join("spec/mocks/**/*.rb")].each { |f| require f }
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 Capybara.default_driver = :rack_test      # This is a faster driver
@@ -160,4 +159,13 @@ RSpec.configure do |config|
   config.example_status_persistence_file_path = 'spec/examples.txt'
 
   config.profile_examples = 10
+
+  # rspec-mocks config goes here. You can use an alternate test double
+  # library (such as bogus or mocha) by changing the `mock_with` option here.
+  config.mock_with :rspec do |mocks|
+    # Prevents you from mocking or stubbing a method that does not exist on
+    # a real object. This is generally recommended, and will default to
+    # `true` in RSpec 4.
+    mocks.verify_partial_doubles = true
+  end
 end
