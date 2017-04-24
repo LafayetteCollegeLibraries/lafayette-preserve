@@ -36,11 +36,6 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Please see https://github.com/projecthydra/sufia/issues/2323#issuecomment-230831332
 gem 'active_fedora-noid', :git => 'https://github.com/projecthydra-labs/active_fedora-noid.git', ref: '8107a47121919ab250784b22e6ee7b066fa711db'
-
-# gem 'sufia', '7.0.0.beta3'
-# Mark Bussey (on June 30th) reported failures for creating CurationConcerns Work Models using the sufia:work generator
-# Please see https://project-hydra.slack.com/archives/dev/p1467317470002834
-# gem "sufia", "7.0.0.beta4", :git => "https://github.com/projecthydra/sufia.git", :ref => '786246a3c8adfab6607227b354d9e1c47bc80efd'
 gem "sufia", "7.0.0"
 
 gem 'hydra-role-management'
@@ -51,10 +46,8 @@ gem 'rdf-blazegraph', :git => "https://jrgriffiniii@github.com/LafayetteCollegeL
 
 gem 'rsolr', '~> 1.0'
 gem 'blacklight_range_limit', '~> 6.0'
-# gem 'thor', '~> 0.19'
 gem 'thor-rails'
 gem 'pg'
-
 gem 'devise'
 gem 'devise-guests', '~> 0.3'
 gem 'mida'
@@ -62,6 +55,7 @@ gem 'config'
 gem 'bagit'
 gem 'rubyzip', '>= 1.0.0'
 gem 'addressable'
+gem 'metadb_api', :git => 'https://github.com/LafayetteCollegeLibraries/metadb-api.git'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

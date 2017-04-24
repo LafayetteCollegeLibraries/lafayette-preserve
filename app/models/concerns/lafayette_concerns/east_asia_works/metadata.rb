@@ -15,7 +15,7 @@ module LafayetteConcerns::EastAsiaWorks
       property :description_citation, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#descriptionCitation')
       property :coverage_location_country, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#coverageLocationCountry')
       property :coverage_location, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#coverageLocation')
-      property :format_medium, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#formatMedium')
+
       property :creator_maker, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#creatorMaker')
       property :creator_company, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#creatorCompany')
       property :creator_digital, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#creatorDigital')
@@ -25,11 +25,6 @@ module LafayetteConcerns::EastAsiaWorks
       property :title_korean, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#titleKorean')
 
       property :relation_seealso, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#relationSeealso')
-
-      property :date_original, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateOriginal') do |index|
-        index.type :date
-        index.as :stored_sortable, :facetable
-      end
 
       property :date_artifact_upper, predicate: ::RDF::URI.new('http://authority.lafayette.edu/metadb#dateArtifactUpper') do |index|
         index.type :date

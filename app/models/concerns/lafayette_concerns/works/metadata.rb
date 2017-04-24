@@ -4,10 +4,74 @@ module LafayetteConcerns::Works
 
     included do
 
-      # Collection for faceting
-      property :bib_collections, predicate: RDF::Vocab::BIBO.Collection do |index|
+      # Custom metadata elements
+      property :date_original, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/dateOriginal") do |index|
+        index.as :stored_searchable
+      end
+
+      property :description_condition, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionCondition") do |index|
+        index.type :text
+        index.as :stored_searchable
+      end
+      
+      property :description_note, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionNote") do |index|
+        index.type :text
+        index.as :stored_searchable
+      end
+
+      property :description_provenance, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionProvenance") do |index|
+        index.type :text
+        index.as :stored_searchable
+      end
+
+      property :description_series, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionSeries") do |index|
+        index.type :text
+        index.as :stored_searchable
+      end
+
+      property :format_digital, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/formatDigital") do |index|
         index.as :stored_searchable, :facetable
       end
+
+      property :format_extent, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/formatExtent") do |index|
+        index.as :stored_searchable
+      end
+
+      property :format_medium, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/formatMedium") do |index|
+        index.as :stored_searchable
+      end
+      
+      property :identifier_itemnumber, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/identifierItemnumber") do |index|
+        index.as :stored_searchable
+      end
+      
+      property :publisher_digital, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/publisherDigital") do |index|
+        index.as :stored_searchable, :facetable
+      end
+      
+      property :publisher_original, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/publisherOriginal") do |index|
+        index.as :stored_searchable, :facetable
+      end
+      
+      # Facet for collections
+      property :bib_collections, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/relationIsPartOf") do |index|
+        index.as :stored_searchable, :facetable
+      end
+
+      property :rights_digital, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/rightsDigital") do |index|
+        index.as :stored_searchable
+      end
+
+      # Same case as "subject.loc"; Request to deprecate and integrate with "subject_loc"
+      property :subject_lcsh, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/subjectLcsh") do |index|
+        index.as :stored_searchable, :facetable
+      end
+
+      property :identifier_url_download, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/identifierUrlDownload") do |index|
+        index.as :stored_searchable
+      end
+
+      ####
 
       # Historical Photograph Collection
 
@@ -19,13 +83,10 @@ module LafayetteConcerns::Works
       end
 
       # Takes URI's from a local resources (an LDF server?)
-      property :creator_photographer, predicate: ::RDF::Vocab::DC11.creator do |index|
+      property :creator_photographer, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/creatorPhotographer") do |index|
         index.as :stored_searchable, :facetable
       end
 
-      property :format_medium, predicate: ::RDF::Vocab::DC11.format do |index|
-        index.as :stored_searchable
-      end
 
       property :format_size, predicate: ::RDF::Vocab::DC11.format do |index|
         index.as :stored_searchable
@@ -50,67 +111,12 @@ module LafayetteConcerns::Works
         index.as :stored_searchable, :facetable
       end
 
-      # Request to deprecate and integrate with "date.original"
-      property :date_original_display, predicate: ::RDF::Vocab::DC.created do |index|
-        index.as :stored_searchable
-      end
-      
       # What distinguishes this from "format.extent"?
-      property :description_size, predicate: ::RDF::Vocab::DC11.description do |index|
+      property :description_size, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionSize") do |index|        
         index.type :text
         index.as :stored_searchable
       end
 
-      # Marquis de Lafayette Prints Collection
-      property :description_note, predicate: ::RDF::Vocab::DC11.description do |index|
-        index.type :text
-        index.as :stored_searchable
-      end
-
-      # Same case as "subject.loc"; Request to deprecate and integrate with "subject_loc"
-      property :subject_lcsh, predicate: ::RDF::Vocab::DC11.subject do |index|
-        index.as :stored_searchable, :facetable
-      end
-      
-      property :publisher_original, predicate: ::RDF::Vocab::DC11.publisher do |index|
-        index.as :stored_searchable, :facetable
-      end
-
-
-      property :format_extent, predicate: ::RDF::Vocab::DC11.format do |index|
-        index.as :stored_searchable
-      end
-
-      property :description_condition, predicate: ::RDF::Vocab::DC11.description do |index|
-        index.type :text
-        index.as :stored_searchable
-      end
-
-      property :description_provenance, predicate: ::RDF::Vocab::DC11.description do |index|
-        index.type :text
-        index.as :stored_searchable
-      end
-
-      property :description_series, predicate: ::RDF::Vocab::DC11.description do |index|
-        index.type :text
-        index.as :stored_searchable
-      end
-
-      property :identifier_itemnumber, predicate: ::RDF::Vocab::DC.identifier do |index|
-        index.as :stored_searchable
-      end
-
-      property :publisher_digital, predicate: ::RDF::Vocab::DC11.publisher do |index|
-        index.as :stored_searchable, :facetable
-      end
-
-      property :format_digital, predicate: ::RDF::Vocab::DC11.format do |index|
-        index.as :stored_searchable, :facetable
-      end
-
-      property :rights_digital, predicate: ::RDF::Vocab::DC.rights do |index|
-        index.as :stored_searchable
-      end
     end
   end
 end

@@ -3,11 +3,11 @@ module LafayetteConcerns::CasualtiesWorks
     extend ActiveSupport::Concern
 
     included do
-      property :title_name, predicate: ::RDF::Vocab::DC.title do |index|
+      property :title_name, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/titleName") do |index|
         index.as :stored_searchable, :facetable
       end
 
-      property :description_class, predicate: ::RDF::Vocab::DC11.description do |index|
+      property :description_class, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionClass") do |index|
         index.type :text
         index.as :stored_searchable
       end
@@ -22,18 +22,19 @@ module LafayetteConcerns::CasualtiesWorks
         index.as :stored_searchable, :facetable
       end
 
-      property :description_military_branch, predicate: ::RDF::Vocab::DC11.description do |index|
+      property :description_military_branch, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionMilitaryBranch") do |index|
         index.type :text
         index.as :stored_searchable
       end
 
       # A controlled vocabulary needs to be identified for this attribute
-      property :description_military_rank, predicate: ::RDF::Vocab::DC11.description do |index|
+      property :description_military_rank, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionMilitaryRank") do |index|
         index.type :text
         index.as :stored_searchable
       end
+
       # Another controlled vocabulary needs to be identified for this attribute
-      property :description_military_unit, predicate: ::RDF::Vocab::DC11.description do |index|
+      property :description_military_unit, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionMilitaryUnit") do |index|
         index.type :text
         index.as :stored_searchable
       end
@@ -48,12 +49,12 @@ module LafayetteConcerns::CasualtiesWorks
         index.as :stored_searchable, :facetable
       end
 
-      property :description_cause_death, predicate: ::RDF::Vocab::DC11.description do |index|
+      property :description_cause_death, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionCauseDeath") do |index|
         index.type :text
         index.as :stored_searchable
       end
 
-      property :description_honors, predicate: ::RDF::Vocab::DC11.description do |index|
+      property :description_honors, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionHonors") do |index|
         index.type :text
         index.as :stored_searchable
       end

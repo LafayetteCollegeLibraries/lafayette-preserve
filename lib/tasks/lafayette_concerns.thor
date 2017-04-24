@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 require 'thor/rails'
-require 'pg'
-require_relative '../metadb-api/metadb'
 require 'bagit'
 require 'zip'
 require 'csv'
+require 'metadb'
 
 class Metadb < Thor
   include Thor::Rails
@@ -50,7 +49,6 @@ class Metadb < Thor
       term.label << label
       term.pref_label << label
 
-#      puts term.label
       term.persist!
     end
   end
@@ -58,6 +56,7 @@ class Metadb < Thor
   desc "ingest_bag", "ingest a ZIP-compressed Bag"
   option :bag, :aliases => "-b", :desc => "ZIP-compressed Bag", :required => true
   option :private, :aliases => "-p", :desc => "privately accessible", :type => :boolean, :default => false
+
   def ingest_bag
 
     user = User.find_by(email: 'griffinj@lafayette.edu')
@@ -70,14 +69,32 @@ class Metadb < Thor
       zip_file.each do |entry|
 
         # Extract to file/directory/symlink
-        puts "Extracting #{entry.name}"
-        if not File.exists? entry.name
-          entry.extract(entry.name)
+        decompressed_path = ::Rails.root.join('tmp', 'ingest', entry.name)
+        entry.extract(decompressed_path)
         
+        if not File.exists? decompressed_path
+
           # Read into memory
-          unless File.directory? entry.name
-            File.open(entry.name, 'wb') { |file| file.write(entry.get_input_stream.read) } 
+          unless File.directory? decompressed_path
+
+            File.open(decompressed_path, 'wb') { |file| file.write(entry.get_input_stream.read) }
           end
+        end
+      end
+    end
+
+    imported_metadata = CSV.read(::Rails.root.join('tmp', 'ingest', 'data', "#{item_name}_metadata.csv"))
+    imported_attributes = {}
+    imported_metadata.each do |record|
+      
+      predicate,object = record[0..1]
+      attributes = GenericWork.properties.values.select {|value| value.predicate.to_s == predicate }.map {|value| value }
+
+      attributes.each do |attribute|
+        if attribute.multiple?
+          imported_attributes[attribute.term.to_sym] = object.split(';')
+        else
+          imported_attributes[attribute.term.to_sym] = object.split(';').first
         end
       end
     end
@@ -93,143 +110,6 @@ class Metadb < Thor
 
     ## BaseActor#apply_save_data_to_curation_concern
     curation_concern.date_modified = CurationConcerns::TimeService.time_in_utc
-
-    puts "data/#{item_name}_metadata.csv"
-
-    imported_metadata = CSV.read("data/#{item_name}_metadata.csv")
-    imported_attributes = {}
-
-    imported_metadata.each do |record|
-
-      case record[0]
-        
-      when 'title'
-        case record[1]
-        when 'english'
-          attr_key = :title
-        when 'japanese'
-          attr_key = :title_japanese
-        when 'chinese'
-          attr_key = :title_chinese
-        when 'korean'
-          attr_key = :title_korean
-        else
-          attr_key = :title
-        end
-
-      when 'contributor'
-        attr_key = :contributor
-      when 'coverage'
-        case record[1]
-        when 'location'
-          attr_key = :coverage_location
-        when 'location.country'
-          attr_key = :coverage_location_country
-        end
-
-      when 'creator'
-        case record[1]
-        when 'company'
-          attr_key = :creator_company
-        when 'digital'
-          attr_key = :creator_digital
-        when 'maker'
-          attr_key = :creator_maker
-        else
-          attr_key = :creator
-        end
-
-      when 'date'
-        case record[1]
-        when 'image.lower'
-          attr_key = :date_image_lower
-        when 'image.upper'
-          attr_key = :date_image_upper
-        when 'artifact.lower'
-          attr_key = :date_artifact_lower
-        when 'artifact.upper'
-          attr_key = :date_artifact_upper
-        when 'original'
-          attr_key = :date_original
-        end
-      when 'description'
-        case record[1]
-        when 'citation'
-          attr_key = :description_citation
-        when 'critical'
-          attr_key = :description_critical
-        when 'ethnicity'
-          attr_key = :description_ethnicity
-        when 'indicia'
-          attr_key = :description_indicia
-        when 'inscription.english'
-          attr_key = :description_inscription
-        when 'inscription.japanese'
-          attr_key = :description_inscription
-        when 'text.english'
-          attr_key = :description
-        when 'text.japanese'
-          attr_key = :description
-        when 'condition'
-          attr_key = :description_condition
-        when 'note'
-          attr_key = :description_note
-        when 'provenance'
-          attr_key = :description_provenance
-        when 'series'
-          attr_key = :description_series
-        else
-          attr_key = :description
-        end
-      when 'format'
-        case record[1]
-        when 'digital'
-          attr_key = :format_digital
-        when 'extent'
-          attr_key = :format_extent
-        when 'medium'
-          attr_key = :format_medium
-        end
-      when 'publisher'
-        case record[1]
-        when 'digital'
-          attr_key = :publisher_digital
-        when 'original'
-          attr_key = :publisher_original
-        end
-      when 'rights'
-        case record[1]
-        when 'digital'
-          attr_key = :rights_digital
-        end
-      when 'subject'
-        case record[1]
-        when 'ocm'
-          attr_key = :subject_ocm
-        else
-          attr_key = :subject
-        end
-      when 'source'
-        attr_key = :source
-      when 'identifier'
-        case record[1]
-        when 'itemnumber'
-          attr_key = :identifier_itemnumber
-        end
-
-      end
-
-      if not attr_key.nil?
-        imported_attributes[attr_key] = [] unless imported_attributes.has_key? attr_key
-
-        if not record[2].nil? and not record[2].empty?
-          record[2].split(';').each do |record_value|
-            imported_attributes[attr_key] << record_value
-          end
-        end
-      end
-    end
-
     curation_concern.attributes = imported_attributes
 
     ### Add the file to a new FileSet
@@ -244,22 +124,21 @@ class Metadb < Thor
     files = []
     file_sets = []
 
-    tif_image_path = "data/#{item_name}.tif"
-    pdf_doc_path = "data/#{item_name}.pdf"
+    tif_image_path = ::Rails.root.join('tmp', 'ingest', 'data', "#{item_name}.tif")
+    pdf_image_path = ::Rails.root.join('tmp', 'ingest', 'data', "#{item_name}.pdf")
 
     if File.file?(tif_image_path)
 
       # Ensure that the last layer is used for the derivative
-      `/usr/bin/env convert data/#{item_name}.tif[0] data/#{item_name}_0.tif`
-      front_file = File.new("data/#{item_name}_0.tif", 'rb')
+      front_file = File.new(::Rails.root.join('tmp', 'ingest', 'data', "#{item_name}_0.tif"), 'rb')
+      `/usr/bin/env convert #{tif_image_path}[0] #{front_file}`
     elsif File.file?(pdf_doc_path)
-
       front_file = File.new(pdf_doc_path, 'rb')
     end
 
     files << front_file
 
-    back_files = Dir.glob("data/#{item_name}b*")
+    back_files = Dir.glob(::Rails.root.join('tmp', 'ingest', 'data', "#{item_name}b*"))
     unless back_files.empty?
       back_file_path = back_files.first
       back_file_name = back_file_path.gsub(/\..+$/, '')
@@ -286,9 +165,6 @@ class Metadb < Thor
       local_file.mime_type = nil
       #    local_file.original_name = opts.fetch(:filename, File.basename(filepath))
       local_file.original_name = File.basename(file.to_path)
-
-      puts file_set.id
-      puts local_file
 
       # Tell AddFileToFileSet service to skip versioning because versions will be minted by
       # VersionCommitter when necessary during save_characterize_and_record_committer.
@@ -342,10 +218,8 @@ class Metadb < Thor
       file_sets << file_set
     end
 
-    ##
     curation_concern.representative = file_sets.first
     curation_concern.thumbnail = file_sets.first
     curation_concern.save!
-    puts curation_concern.id
   end
 end
