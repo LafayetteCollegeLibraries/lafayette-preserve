@@ -3,9 +3,9 @@ class GenericWork < ActiveFedora::Base
   include ::CurationConcerns::BasicMetadata
   include Sufia::WorkBehavior
   include LafayetteConcerns::WorkBehavior
-  include LafayetteConcerns::EastAsiaWorkBehavior
-  include LafayetteConcerns::SilkRoadWorkBehavior
-  include LafayetteConcerns::CasualtiesWorkBehavior
+#  include LafayetteConcerns::EastAsiaWorkBehavior
+#  include LafayetteConcerns::SilkRoadWorkBehavior
+#  include LafayetteConcerns::CasualtiesWorkBehavior
 # include LafayetteConcerns::ScholarlyWorkBehavior
   self.human_readable_type = 'Work'
   # Change this to restrict which works can be added as a child.

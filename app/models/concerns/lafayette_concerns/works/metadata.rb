@@ -4,10 +4,9 @@ module LafayetteConcerns::Works
 
     included do
 
+      
+
       # Custom metadata elements
-      property :date_original, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/dateOriginal") do |index|
-        index.as :stored_searchable
-      end
 
       property :description_condition, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionCondition") do |index|
         index.type :text
@@ -29,25 +28,13 @@ module LafayetteConcerns::Works
         index.as :stored_searchable
       end
 
-      property :format_digital, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/formatDigital") do |index|
-        index.as :stored_searchable, :facetable
-      end
 
-      property :format_extent, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/formatExtent") do |index|
-        index.as :stored_searchable
-      end
 
-      property :format_medium, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/formatMedium") do |index|
-        index.as :stored_searchable
-      end
       
       property :identifier_itemnumber, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/identifierItemnumber") do |index|
         index.as :stored_searchable
       end
       
-      property :publisher_digital, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/publisherDigital") do |index|
-        index.as :stored_searchable, :facetable
-      end
       
       property :publisher_original, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/publisherOriginal") do |index|
         index.as :stored_searchable, :facetable
@@ -58,18 +45,12 @@ module LafayetteConcerns::Works
         index.as :stored_searchable, :facetable
       end
 
-      property :rights_digital, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/rightsDigital") do |index|
-        index.as :stored_searchable
-      end
 
       # Same case as "subject.loc"; Request to deprecate and integrate with "subject_loc"
       property :subject_lcsh, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/subjectLcsh") do |index|
         index.as :stored_searchable, :facetable
       end
 
-      property :identifier_url_download, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/identifierUrlDownload") do |index|
-        index.as :stored_searchable
-      end
 
       ####
 
