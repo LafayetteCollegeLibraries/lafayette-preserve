@@ -4,100 +4,225 @@ module LafayetteConcerns::Works
 
     included do
 
-      
-
-      # Custom metadata elements
-
-      property :description_condition, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionCondition") do |index|
-        index.type :text
-        index.as :stored_searchable
-      end
-      
-      property :description_note, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionNote") do |index|
-        index.type :text
-        index.as :stored_searchable
-      end
-
-      property :description_provenance, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionProvenance") do |index|
-        index.type :text
-        index.as :stored_searchable
-      end
-
-      property :description_series, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionSeries") do |index|
-        index.type :text
-        index.as :stored_searchable
+      # Common MetaDB predicates
+      Vocabularies::MetaDB::Common.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+        
+        case property_name
+        when *Vocabularies::MetaDB::DATES
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :date
+            index.as :stored_sortable, :facetable
+          end
+        when *Vocabularies::MetaDB::FACETS
+          property property_name, predicate: metadb_predicate do |index|
+            index.as :stored_searchable, :facetable
+          end
+        else
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :text
+            index.as :stored_searchable
+          end
+        end
       end
 
-
-
-      
-      property :identifier_itemnumber, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/identifierItemnumber") do |index|
-        index.as :stored_searchable
-      end
-      
-      
-      property :publisher_original, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/publisherOriginal") do |index|
-        index.as :stored_searchable, :facetable
-      end
-      
-      # Facet for collections
-      property :bib_collections, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/relationIsPartOf") do |index|
-        index.as :stored_searchable, :facetable
-      end
-
-
-      # Same case as "subject.loc"; Request to deprecate and integrate with "subject_loc"
-      property :subject_lcsh, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/subjectLcsh") do |index|
-        index.as :stored_searchable, :facetable
-      end
-
-
-      ####
-
-      # Historical Photograph Collection
-
-      # Takes URI's from http://id.loc.gov/authorities/subjects
-      # Support for Linked Data Fragments?
-      # Support for Questioning Authority?
-      property :subject_loc, predicate: ::RDF::Vocab::DC11.subject do |index|
-        index.as :stored_searchable, :facetable
+      # Alsace Predicates
+      Vocabularies::MetaDB::Alsace.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+        
+        case property_name
+        when *Vocabularies::MetaDB::DATES
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :date
+            index.as :stored_sortable, :facetable
+          end
+        when *Vocabularies::MetaDB::FACETS
+          property property_name, predicate: metadb_predicate do |index|
+            index.as :stored_searchable, :facetable
+          end
+        else
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :text
+            index.as :stored_searchable
+          end
+        end
       end
 
-      # Takes URI's from a local resources (an LDF server?)
-      property :creator_photographer, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/creatorPhotographer") do |index|
-        index.as :stored_searchable, :facetable
+      # BeyondSteel Predicates
+      Vocabularies::MetaDB::BeyondSteel.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+        
+        case property_name
+        when *Vocabularies::MetaDB::DATES
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :date
+            index.as :stored_sortable, :facetable
+          end
+        when *Vocabularies::MetaDB::FACETS
+          property property_name, predicate: metadb_predicate do |index|
+            index.as :stored_searchable, :facetable
+          end
+        else
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :text
+            index.as :stored_searchable
+          end
+        end
       end
 
-
-      property :format_size, predicate: ::RDF::Vocab::DC11.format do |index|
-        index.as :stored_searchable
+      # Biology Predicates
+      Vocabularies::MetaDB::Biology.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+        
+        case property_name
+        when *Vocabularies::MetaDB::DATES
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :date
+            index.as :stored_sortable, :facetable
+          end
+        when *Vocabularies::MetaDB::FACETS
+          property property_name, predicate: metadb_predicate do |index|
+            index.as :stored_searchable, :facetable
+          end
+        else
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :text
+            index.as :stored_searchable
+          end
+        end
       end
 
-      # Not explicitly clear why this is a separate field from the previous "date"
-      # Raise for discussion with archivist and librarians
-      property :date_approximate, predicate: ::RDF::Vocab::DC.created do |index|
-        index.as :stored_searchable
+      # East Asia Image Collection
+      Vocabularies::MetaDB::EastAsia.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+        
+        case property_name
+        when *Vocabularies::MetaDB::DATES
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :date
+            index.as :stored_sortable, :facetable
+          end
+        when *Vocabularies::MetaDB::FACETS
+          property property_name, predicate: metadb_predicate do |index|
+            index.as :stored_searchable, :facetable
+          end
+        else
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :text
+            index.as :stored_searchable
+          end
+        end
       end
 
-      # Uncertain as to whether or not this catches a range with "date"; Uncertain of the relationship with "data.approximate"
-      # Ranges are captured as separate resource instances
-      # Dublin Core supports this using http://purl.org/dc/terms/PeriodOfTime [dcterms:PeriodOfTime]
-      property :date_range, predicate: ::RDF::Vocab::DC.created do |index|
-        index.as :stored_searchable
+      # Geology Predicates
+      Vocabularies::MetaDB::GeologySlides.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+        
+        case property_name
+        when *Vocabularies::MetaDB::DATES
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :date
+            index.as :stored_sortable, :facetable
+          end
+        when *Vocabularies::MetaDB::FACETS
+          property property_name, predicate: metadb_predicate do |index|
+            index.as :stored_searchable, :facetable
+          end
+        else
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :text
+            index.as :stored_searchable
+          end
+        end
       end
 
-      # McKelvy House Collection
-      # Takes URI's from a local resources (an LDF server? a data dump?)
-      property :creator_maker, predicate: ::RDF::Vocab::DC11.creator do |index|
-        index.as :stored_searchable, :facetable
+      # Historical Predicates
+      Vocabularies::MetaDB::Historical.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+        
+        case property_name
+        when *Vocabularies::MetaDB::DATES
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :date
+            index.as :stored_sortable, :facetable
+          end
+        when *Vocabularies::MetaDB::FACETS
+          property property_name, predicate: metadb_predicate do |index|
+            index.as :stored_searchable, :facetable
+          end
+        else
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :text
+            index.as :stored_searchable
+          end
+        end
       end
 
-      # What distinguishes this from "format.extent"?
-      property :description_size, predicate: RDF::URI("http://authority.lafayette.edu/ns/metadb/descriptionSize") do |index|        
-        index.type :text
-        index.as :stored_searchable
+      # MarquisDeLafayette Predicates
+      Vocabularies::MetaDB::MarquisDeLafayette.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+        
+        case property_name
+        when *Vocabularies::MetaDB::DATES
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :date
+            index.as :stored_sortable, :facetable
+          end
+        when *Vocabularies::MetaDB::FACETS
+          property property_name, predicate: metadb_predicate do |index|
+            index.as :stored_searchable, :facetable
+          end
+        else
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :text
+            index.as :stored_searchable
+          end
+        end
       end
 
+      # McKelvyHouse
+      Vocabularies::MetaDB::McKelvyHouse.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+        
+        case property_name
+        when *Vocabularies::MetaDB::DATES
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :date
+            index.as :stored_sortable, :facetable
+          end
+        when *Vocabularies::MetaDB::FACETS
+          property property_name, predicate: metadb_predicate do |index|
+            index.as :stored_searchable, :facetable
+          end
+        else
+          property property_name, predicate: metadb_predicate do |index|
+            index.type :text
+            index.as :stored_searchable
+          end
+        end
+      end    
+
+      # Silk Road
+      Vocabularies::MetaDB::SilkRoad.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+
+        # No alternative indexing strategy for any fields
+        property property_name, predicate: metadb_predicate do |index|
+          index.type :text
+          index.as :stored_searchable
+        end
+      end
+
+      # War Casualties
+      Vocabularies::MetaDB::WarCasualties.properties.each do |metadb_predicate|
+        property_name = Vocabularies.property_name(metadb_predicate).to_sym
+
+        # No alternative indexing strategy for any fields
+        property property_name, predicate: metadb_predicate do |index|
+          index.type :text
+          index.as :stored_searchable
+        end
+      end
     end
   end
 end
