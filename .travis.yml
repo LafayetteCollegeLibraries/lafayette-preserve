@@ -1,14 +1,15 @@
 dist: trusty
 language: ruby
 rvm:
-  - 2.4.1
+  - 2.3.1
 sudo: false
 
 env:
   global:
     - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
   matrix:
-    - "RAILS_VERSION=4.2.8"
+    - "RAILS_VERSION=4.2.7.1"
+      "RDF_VERSION=1.99.1"
 
 cache:
   bundler: true
