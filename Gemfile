@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.6'
+gem 'rails', '~> 5.0.0'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use SCSS for stylesheets
@@ -22,8 +22,12 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use Sufia
 
 # Please see https://github.com/projecthydra/sufia/issues/2323#issuecomment-230831332
-gem 'active_fedora-noid', :git => 'https://github.com/projecthydra-labs/active_fedora-noid.git', ref: '8107a47121919ab250784b22e6ee7b066fa711db'
-gem "sufia", "7.0.0"
+# gem 'active_fedora-noid', :git => 'https://github.com/projecthydra-labs/active_fedora-noid.git', ref: '8107a47121919ab250784b22e6ee7b066fa711db'
+
+gem 'rdf', '~> 1.99'
+gem "curation_concerns", "~> 1.6.3"
+gem "sufia", "7.2.0"
+gem 'flipflop', git: 'https://github.com/jcoyne/flipflop.git', branch: 'hydra'
 
 gem 'hydra-role-management'
 gem 'rack-cors', :require => 'rack/cors'
@@ -33,7 +37,6 @@ gem 'rdf-blazegraph', :git => "https://github.com/LafayetteCollegeLibraries/rdf-
 gem 'rsolr', '~> 1.0'
 gem 'blacklight_range_limit', '~> 6.0'
 gem 'thor-rails'
-gem 'pg'
 gem 'devise'
 gem 'devise-guests', '~> 0.3'
 gem 'mida'
