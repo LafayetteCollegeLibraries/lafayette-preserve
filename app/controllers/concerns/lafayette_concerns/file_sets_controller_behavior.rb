@@ -193,11 +193,7 @@ module LafayetteConcerns
       ### Add the file to a new FileSet
       ## AttachFilesActor#attach_file
 
-#      if params[:private]
-#        work.visibility = Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
-#      else
-        work.visibility = Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
-#      end
+      work.visibility = Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
     
       files = []
       file_sets = []
@@ -227,8 +223,6 @@ module LafayetteConcerns
         files << back_file
       end
 
-#      relation = :original_file
-
       files.each do |file|
         process_file(file, work.id)
       end
@@ -237,26 +231,8 @@ module LafayetteConcerns
     protected
 
     def process_file(file, parent_id)
-      # update_metadata_from_upload_screen
-      # actor.create_metadata(find_parent_by_id, params[:file_set])
-      
       actor.create_metadata(parent_id, params[:file_set])
       actor.create_content(file)
-=begin
-      if actor.create_content(file)
-        respond_to do |format|
-          format.json do
-#            render 'jq_upload', status: :created, location: polymorphic_path([main_app, curation_concern])
-            render json: { status: 'ok' }
-          end
-        end
-      else
-        msg = curation_concern.errors.full_messages.join(', ')
-#        flash[:error] = msg
-#        json_error "Error creating file #{file.original_filename}: #{msg}"
-        render json: { status: 'error', message: msg }
-      end
-=end
     end
   end
 end

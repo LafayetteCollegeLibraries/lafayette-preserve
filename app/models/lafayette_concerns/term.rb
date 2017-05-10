@@ -53,6 +53,10 @@ module LafayetteConcerns
       set_subject! uri
     end
 
+    def id=(id)
+      uri=(id)
+    end
+
     def save!
       persist!
     end

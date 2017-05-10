@@ -11,7 +11,9 @@ describe CurationConcerns::GenericWorksController do
 
     describe 'updates over REST' do
 
-      before { put :update, { id: resource, generic_work: { title: ['updated title'] }, format: :json } }
+      before do
+        put :update, params: { id: resource, generic_work: { title: ['updated title'] }, format: :json }
+      end
       it "updates the metadata for the GenericWork" do
         expect(assigns[:curation_concern]).to be_instance_of GenericWork
         expect(controller).to render_template(:update)

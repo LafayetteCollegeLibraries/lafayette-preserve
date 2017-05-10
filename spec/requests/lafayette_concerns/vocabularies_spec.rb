@@ -12,7 +12,9 @@ describe "controlled vocabulary management", :type => :request do
   end
 
   describe 'replacing the attributes of a vocabulary with no terms' do
-    before { put '/vocabularies', id: 'quxVocabulary2', vocabulary: { label: ['replaced label'], terms: [] }, format: :json }
+    before do
+      put '/vocabularies', params: { id: 'quxVocabulary2', vocabulary: { label: ['replaced label'], terms: [] }, format: :json }
+    end
 
     it "replacing the attributes of a vocabulary with no terms" do
 
@@ -28,8 +30,15 @@ describe "controlled vocabulary management", :type => :request do
     before do
       @term = LafayetteConcerns::Term.new('http://authority.localhost.localdomain/ns/quxVocabulary/testTerm')
       @term.persist!
+      params = {
+        id: 'quxVocabulary',
+        vocabulary: { label: ['replaced label'],
+                      terms: [ { uri: 'http://authority.localhost.localdomain/ns/quxVocabulary/testTerm', label: ['replaced term label'] } ]
+                    },
+        format: :json
+      }
 
-      put '/vocabularies', id: 'quxVocabulary', vocabulary: { label: ['replaced label'], terms: [ { uri: 'http://authority.localhost.localdomain/ns/quxVocabulary/testTerm', label: ['replaced term label'] } ] }, format: :json
+      put '/vocabularies', params: params
     end
 
     after do
@@ -47,7 +56,9 @@ describe "controlled vocabulary management", :type => :request do
 
 
   describe 'updating the attributes for a vocabulary' do
-    before { patch '/vocabularies', id: 'quxVocabulary', vocabulary: { label: ['updated label'], alt_label: ['updated alternate label'] }, format: :json }
+    before do
+      patch '/vocabularies', params: { id: 'quxVocabulary', vocabulary: { label: ['updated label'], alt_label: ['updated alternate label'] }, format: :json }
+    end
 
     it "updating the attributes for a vocabulary" do
 
@@ -64,8 +75,14 @@ describe "controlled vocabulary management", :type => :request do
     before do
       @term = LafayetteConcerns::Term.new('http://authority.localhost.localdomain/ns/quxVocabulary/testTerm')
       @term.persist!
+      params = { id: 'quxVocabulary',
+                 vocabulary: { label: ['updated label'],
+                               alt_label: ['updated alternate label'],
+                               terms: [ { uri: 'http://authority.localhost.localdomain/ns/quxVocabulary/testTerm', label: ['updated term label'] } ]
+                             },
+                 format: :json }
 
-      patch '/vocabularies', id: 'quxVocabulary', vocabulary: { label: ['updated label'], alt_label: ['updated alternate label'], terms: [ { uri: 'http://authority.localhost.localdomain/ns/quxVocabulary/testTerm', label: ['updated term label'] } ] }, format: :json
+      patch '/vocabularies', params: params
     end
 
     after do

@@ -100,10 +100,7 @@ class VocabulariesController < ApplicationController
           end
         end
 
-        attributes.each_pair do |attr_name, value|
-          @vocabulary.write_attribute(attr_name, attributes.fetch(attr_name, @vocabulary.read_attribute(attr_name)))
-          @vocabulary.persist!
-        end
+        @vocabulary.update_attributes(attributes)
         
         # If this is a PUT request, remove all Terms
         if request.put?
@@ -113,6 +110,7 @@ class VocabulariesController < ApplicationController
         end
                 
         terms_attributes.each do |term_attributes|
+
           # Create the Term if it does not exist
           begin
 
@@ -147,18 +145,8 @@ class VocabulariesController < ApplicationController
         
           term_attributes.delete(:uri)
         
-          # If the Term exists, ensure that those attributes which are not overwritten are preserved (if this is a PATCH request)
-          if request.patch?
-            term_attributes = term.to_h.merge(term_attributes) { |key, old_attr, new_attr| new_attr.empty? ? old_attr : new_attr }
-          end
-        
-          # To be determined: Is this proper to the understanding of PATCH vs. PUT?  If "terms" captures the entire set of entities, is not a PATCH request for a Vocabulary essentially a PUT request for each Term?
-          # Probably best not to undertake this approach; otherwise, updating only select attributes for Term resources will require a series of PUT requests to the Term service endpoints
-        
           # Update the Term attributes
-          term_attributes.each_pair do |attr_name, value|
-            term.write_attribute(attr_name, term_attributes.fetch(attr_name, term.read_attribute(attr_name)))
-          end
+          term.update_attributes(term_attributes)
         
           term.persist!
         end
