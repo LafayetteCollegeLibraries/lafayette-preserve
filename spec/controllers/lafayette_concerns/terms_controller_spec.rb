@@ -17,7 +17,7 @@ describe LafayetteConcerns::TermsController, :type => :controller do
       before do
         @term = LafayetteConcerns::Term.new('http://authority.localhost.localdomain/ns/testVocabulary/testTerm')
         @term.persist!
-        get :show, vocabulary_id: 'testVocabulary', id: 'testTerm', format: :json
+        get :show, params: { vocabulary_id: 'testVocabulary', id: 'testTerm', format: :json }
       end
 
       after { @term.destroy }

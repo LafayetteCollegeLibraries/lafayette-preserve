@@ -16,7 +16,7 @@ describe "term management for controlled vocabularies", :type => :request do
       @term = LafayetteConcerns::Term.new('http://authority.localhost.localdomain/ns/testVocabulary/testTerm')
       @term.persist!
 
-      get '/terms/testVocabulary/testTerm', format: :json
+      get '/terms/testVocabulary/testTerm', params: { format: :json }
     end
 
     after(:each) { @term.destroy }

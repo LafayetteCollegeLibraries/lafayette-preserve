@@ -3,6 +3,7 @@ module ActiveTriplesAdapter
   included do
     alias_method :orig_reload, :reload
     def reload
+      # ?
     end
 
     def read_attribute(attr_name)
@@ -17,6 +18,12 @@ module ActiveTriplesAdapter
 
     def destroy
       erase_old_resource
+    end
+
+    def update_attributes(attributes)
+      attributes.each_pair do |attr_name, value|
+        write_attribute(attr_name, attributes.fetch(attr_name, read_attribute(attr_name)))
+      end
     end
   end
 

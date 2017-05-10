@@ -24,16 +24,14 @@ describe LafayetteConcerns::Vocabulary do
       @term.destroy
     end
 
-    it 'can detemine if it has a child term' do
-
+    it 'can determine if it has a child term' do
       expect(subject.include?(@term)).to be true
       expect(subject.include?(@foreign_term)).to be false
     end
 
     it 'can have multiple child terms' do
-
-      expect(subject.children).to include(@term)
-      expect(subject.children).to include(@second_term)
+      expect(subject.children.map {|child| child.rdf_subject}).to include(@term.rdf_subject)
+      expect(subject.children.map {|child| child.rdf_subject}).to include(@second_term.rdf_subject)
     end
   end
 end

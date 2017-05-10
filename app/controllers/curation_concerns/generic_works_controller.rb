@@ -1,24 +1,14 @@
-# Generated via
-#  `rails generate curation_concerns:work GenericWork`
-
 module CurationConcerns
   class GenericWorksController < ApplicationController
     include CurationConcerns::CurationConcernController
-    # Adds Sufia behaviors to the controller.
     include Sufia::WorksControllerBehavior
 
     self.curation_concern_type = GenericWork
     skip_authorize_resource :only => [ :update, :create ]
 
-    # If any attributes are blank remove them
-    # e.g.:
-    #   self.attributes = { 'title' => ['first', 'second', ''] }
-    #   remove_blank_attributes!
-    #   self.attributes
-    # => { 'title' => ['first', 'second'] }
     def remove_blank_attributes!(attributes)
-      multivalued_form_attributes(attributes).each_with_object(attributes) do |(k, v), h|
-        h[k] = v.instance_of?(Array) ? v.select(&:present?) : v
+      multivalued_form_attributes(attributes).select! do |k, v|
+        v.instance_of?(Array) ? v.select(&:present?) : v
       end
     end
 
@@ -31,13 +21,16 @@ module CurationConcerns
       respond_to do |wants|
         wants.json do
           # See CurationConcerns::Actors::BaseActor
-#          attributes = form_class.model_attributes(params[hash_key_for_curation_concern])
           attributes = params[hash_key_for_curation_concern]
           Rails.logger.warn attributes
 
           attributes[:rights] = Array(attributes[:rights]) if attributes.key? :rights
           remove_blank_attributes!(attributes)
-          curation_concern.attributes = attributes.symbolize_keys
+
+          symbolized_attributes = {}
+          attributes.each_pair { |k, v| symbolized_attributes.store(k.to_sym, v) }
+
+          curation_concern.attributes = symbolized_attributes
           curation_concern.date_modified = CurationConcerns::TimeService.time_in_utc
           curation_concern.save!
         end
@@ -236,12 +229,7 @@ module CurationConcerns
 
       ### Add the file to a new FileSet
       ## AttachFilesActor#attach_file
-
-#      if params[:private]
-#        work.visibility = Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
-#      else
       work.visibility = Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
-#      end
     
       files = []
       file_sets = []
