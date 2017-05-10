@@ -22,7 +22,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use Sufia
 gem 'rdf', '~> 1.99'
 gem 'blacklight_advanced_search', '~> 6.0'
-gem "sufia", "7.3.0"
+gem "sufia", "7.3.1"
 gem 'hydra-role-management'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'triplestore-adapter', :git => "https://github.com/osulp/triplestore-adapter", :branch => "0.1.0"
