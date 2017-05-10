@@ -20,20 +20,13 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use Sufia
-
-# Please see https://github.com/projecthydra/sufia/issues/2323#issuecomment-230831332
-# gem 'active_fedora-noid', :git => 'https://github.com/projecthydra-labs/active_fedora-noid.git', ref: '8107a47121919ab250784b22e6ee7b066fa711db'
-
 gem 'rdf', '~> 1.99'
-gem "curation_concerns", "~> 1.6.3"
-gem "sufia", "7.2.0"
-gem 'flipflop', git: 'https://github.com/jcoyne/flipflop.git', branch: 'hydra'
-
+gem 'blacklight_advanced_search', '~> 6.0'
+gem "sufia", "7.3.0"
 gem 'hydra-role-management'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'triplestore-adapter', :git => "https://github.com/osulp/triplestore-adapter", :branch => "0.1.0"
 gem 'rdf-blazegraph', :git => "https://github.com/LafayetteCollegeLibraries/rdf-blazegraph-legacy.git", :branch => "legacy-content-type-ttl"
-
 gem 'rsolr', '~> 1.0'
 gem 'blacklight_range_limit', '~> 6.0'
 gem 'thor-rails'
@@ -50,14 +43,11 @@ gem 'mimemagic'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
-
   gem 'solr_wrapper', '>= 0.16.0'
   gem 'fcrepo_wrapper'
-
   gem 'engine_cart', '~> 1.0'
   gem 'rubocop-rspec', '~> 1.5'
   gem 'factory_girl'
-
   gem 'coveralls'
   gem 'rspec-rails'
   gem 'rspec-its', '~> 1.1'
