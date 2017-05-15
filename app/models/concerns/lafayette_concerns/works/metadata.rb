@@ -16,12 +16,12 @@ module LafayetteConcerns::Works
           end
         when *Vocabularies::MetaDB::FACETS
           property property_name, predicate: metadb_predicate do |index|
-            index.as :stored_searchable, :facetable
+            index.as :stored_sortable, :stored_searchable, :facetable
           end
         else
           property property_name, predicate: metadb_predicate do |index|
             index.type :text
-            index.as :stored_searchable
+            index.as :stored_sortable, :stored_searchable
           end
         end
       end
@@ -38,12 +38,12 @@ module LafayetteConcerns::Works
           end
         when *Vocabularies::MetaDB::FACETS
           property property_name, predicate: metadb_predicate do |index|
-            index.as :stored_searchable, :facetable
+            index.as :stored_sortable, :stored_searchable, :facetable
           end
         else
           property property_name, predicate: metadb_predicate do |index|
             index.type :text
-            index.as :stored_searchable
+            index.as :stored_sortable, :stored_searchable
           end
         end
       end
@@ -60,12 +60,12 @@ module LafayetteConcerns::Works
           end
         when *Vocabularies::MetaDB::FACETS
           property property_name, predicate: metadb_predicate do |index|
-            index.as :stored_searchable, :facetable
+            index.as :stored_sortable, :stored_searchable, :facetable
           end
         else
           property property_name, predicate: metadb_predicate do |index|
             index.type :text
-            index.as :stored_searchable
+            index.as :stored_sortable, :stored_searchable
           end
         end
       end
@@ -82,12 +82,12 @@ module LafayetteConcerns::Works
           end
         when *Vocabularies::MetaDB::FACETS
           property property_name, predicate: metadb_predicate do |index|
-            index.as :stored_searchable, :facetable
+            index.as :stored_sortable, :stored_searchable, :facetable
           end
         else
           property property_name, predicate: metadb_predicate do |index|
             index.type :text
-            index.as :stored_searchable
+            index.as :stored_sortable, :stored_searchable
           end
         end
       end
@@ -104,12 +104,12 @@ module LafayetteConcerns::Works
           end
         when *Vocabularies::MetaDB::FACETS
           property property_name, predicate: metadb_predicate do |index|
-            index.as :stored_searchable, :facetable
+            index.as :stored_sortable, :stored_searchable, :facetable
           end
         else
           property property_name, predicate: metadb_predicate do |index|
             index.type :text
-            index.as :stored_searchable
+            index.as :stored_sortable, :stored_searchable
           end
         end
       end
@@ -126,12 +126,12 @@ module LafayetteConcerns::Works
           end
         when *Vocabularies::MetaDB::FACETS
           property property_name, predicate: metadb_predicate do |index|
-            index.as :stored_searchable, :facetable
+            index.as :stored_sortable, :stored_searchable, :facetable
           end
         else
           property property_name, predicate: metadb_predicate do |index|
             index.type :text
-            index.as :stored_searchable
+            index.as :stored_sortable, :stored_searchable
           end
         end
       end
@@ -148,12 +148,12 @@ module LafayetteConcerns::Works
           end
         when *Vocabularies::MetaDB::FACETS
           property property_name, predicate: metadb_predicate do |index|
-            index.as :stored_searchable, :facetable
+            index.as :stored_sortable, :stored_searchable, :facetable
           end
         else
           property property_name, predicate: metadb_predicate do |index|
             index.type :text
-            index.as :stored_searchable
+            index.as :stored_sortable, :stored_searchable
           end
         end
       end
@@ -170,12 +170,12 @@ module LafayetteConcerns::Works
           end
         when *Vocabularies::MetaDB::FACETS
           property property_name, predicate: metadb_predicate do |index|
-            index.as :stored_searchable, :facetable
+            index.as :stored_sortable, :stored_searchable, :facetable
           end
         else
           property property_name, predicate: metadb_predicate do |index|
             index.type :text
-            index.as :stored_searchable
+            index.as :stored_sortable, :stored_searchable
           end
         end
       end
@@ -192,12 +192,12 @@ module LafayetteConcerns::Works
           end
         when *Vocabularies::MetaDB::FACETS
           property property_name, predicate: metadb_predicate do |index|
-            index.as :stored_searchable, :facetable
+            index.as :stored_sortable, :stored_searchable, :facetable
           end
         else
           property property_name, predicate: metadb_predicate do |index|
             index.type :text
-            index.as :stored_searchable
+            index.as :stored_sortable, :stored_searchable
           end
         end
       end    
@@ -209,7 +209,7 @@ module LafayetteConcerns::Works
         # No alternative indexing strategy for any fields
         property property_name, predicate: metadb_predicate do |index|
           index.type :text
-          index.as :stored_searchable
+          index.as :stored_sortable, :stored_searchable
         end
       end
 
@@ -220,7 +220,7 @@ module LafayetteConcerns::Works
         # No alternative indexing strategy for any fields
         property property_name, predicate: metadb_predicate do |index|
           index.type :text
-          index.as :stored_searchable
+          index.as :stored_sortable, :stored_searchable
         end
       end
     end
