@@ -218,9 +218,31 @@ class Metadb < Thor
   option :bag_dir_path, :aliases => "-d", :desc => "directory of ZIP-compressed Bags", :required => true
   option :private, :aliases => "-p", :desc => "privately accessible", :type => :boolean, :default => false
   option :user, :aliases => "-u", :desc => "the e-mail address for the user ingesting the Work", :required => true
+  option :bag_file_attr, :aliases => "-a", :desc => "bag file attribute"
+  option :bag_file_attr_eq, :aliases => "-eq", :desc => "bag file attribute value"
+  option :bag_file_attr_gt, :aliases => "-gt", :desc => "bag file attribute condition (greater than)"
+  option :bag_file_attr_lt, :aliases => "-lt", :desc => "bag file attribute condition (less than)"
   def ingest_bags
-    Dir.glob(File.join(optionss[:bag_dir_path], '*zip')) do |bag_path|
-      ingest(bag_path, options[:user], options[:private])
+    Dir.glob(File.join(options[:bag_dir_path], '*zip')) do |bag_path|
+      if options[:bag_file_attr]
+        begin
+          raise Exception "" unless File.stat(bag_path).respond_to? options[:bag_file_attr].to_sym
+        rescue Exception => e
+          $stderr.puts e.msg
+        end
+        attr_value = File.stat(bag_path).send options[:bag_file_attr].to_sym
+        if options[:bag_file_attr_eq] && attr_value == options[:bag_file_attr_eq]
+          ingest(bag_path, options[:user], options[:private])
+        elsif options[:bag_file_attr_gt] && attr_value > options[:bag_file_attr_gt]
+          ingest(bag_path, options[:user], options[:private])
+        elsif options[:bag_file_attr_lt] && attr_value < options[:bag_file_attr_lt]
+          ingest(bag_path, options[:user], options[:private])
+        else
+          ingest(bag_path, options[:user], options[:private])
+        end
+      else
+        ingest(bag_path, options[:user], options[:private])
+      end
     end
   end
 
