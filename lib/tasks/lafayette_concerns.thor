@@ -218,9 +218,47 @@ class Metadb < Thor
   option :bag_dir_path, :aliases => "-d", :desc => "directory of ZIP-compressed Bags", :required => true
   option :private, :aliases => "-p", :desc => "privately accessible", :type => :boolean, :default => false
   option :user, :aliases => "-u", :desc => "the e-mail address for the user ingesting the Work", :required => true
+  option :bag_file_attr, :aliases => "-a", :desc => "bag file attribute"
+  option :bag_file_attr_eq, :aliases => "-E", :desc => "bag file attribute value"
+  option :bag_file_attr_gt, :aliases => "-G", :desc => "bag file attribute condition (greater than)"
+  option :bag_file_attr_lt, :aliases => "-L", :desc => "bag file attribute condition (less than)"
   def ingest_bags
-    Dir.glob(File.join(optionss[:bag_dir_path], '*zip')) do |bag_path|
-      ingest(bag_path, options[:user], options[:private])
+    Dir.glob(File.join(options[:bag_dir_path], '*zip')) do |bag_path|
+
+      if options[:bag_file_attr]
+        begin
+          raise Exception "#{options[:bag_file_attr]} is not a supported file attribute" unless File.stat(bag_path).respond_to?(options[:bag_file_attr].to_sym)
+        rescue Exception => e
+          $stderr.puts e.msg
+        end
+        attr_value = File.stat(bag_path).send options[:bag_file_attr].to_sym
+        if options[:bag_file_attr_eq]
+          bag_file_attr_eq = options[:bag_file_attr_eq]
+          bag_file_attr_eq = Time.parse(bag_file_attr_eq) if attr_value.is_a?(Time)
+
+          if attr_value == bag_file_attr_eq
+            ingest(bag_path, options[:user], options[:private])
+          end
+        elsif options[:bag_file_attr_gt]
+          bag_file_attr_gt = options[:bag_file_attr_gt]
+          bag_file_attr_gt = Time.parse(bag_file_attr_gt) if attr_value.is_a?(Time)
+
+          if attr_value < bag_file_attr_gt
+            ingest(bag_path, options[:user], options[:private])
+          end
+        elsif options[:bag_file_attr_lt]
+          bag_file_attr_lt = options[:bag_file_attr_lt]
+          bag_file_attr_lt = Time.parse(bag_file_attr_lt) if attr_value.is_a?(Time)
+
+          if attr_value > bag_file_attr_lt
+            ingest(bag_path, options[:user], options[:private])
+          end
+        else
+          ingest(bag_path, options[:user], options[:private])
+        end
+      else
+        ingest(bag_path, options[:user], options[:private])
+      end
     end
   end
 
